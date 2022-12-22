@@ -1,0 +1,58 @@
+{% extends 'store/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Produk {% endblock %}
+
+<!-- block username -->
+{% block username %}{{store.name}}{% endblock %}
+
+<!-- block content -->
+{% block content %}
+<h1 class="h3 mb-2 text-gray-800">Pengaturan</h1>
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">Pengaturan Rekening Toko</h6>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-6">
+        <h6>Rekening Toko:</h6>
+        <div class="py-3">
+          <p>
+            {% if store.account_number %}
+            <!--  -->
+            <strong>Nomor Rekening:</strong> {{ store.account_number }} <br />
+            <strong>Nama Rekening:</strong> {{ store.account_name }} <br />
+            <strong>Nama Bank:</strong> {{ store.bank_name }} <br />
+            <!--  -->
+            {% else %}
+            <!--  -->
+            Rekening belum diperbaharui.
+            <!--  -->
+            {% endif %}
+          </p>
+        </div>
+      </div>
+      <div class="col-6">
+        <h6>Ubah Data Rekening:</h6>
+        <div class="p-2">
+          <form method="POST">
+            {% csrf_token %} {{ forms.as_p }}
+            <div class="mb-3">
+              <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- block script -->
+{% block script %}
+<script src="{% static 'js/wilayah.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Pesanan Saya | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .title {
+    margin-bottom: 0;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .edit-alamat, .hapus-alamat {
+    text-decoration: none;
+  }
+
+  .edit-alamat:hover, .hapus-alamat:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<div class="container py-3">
+  <div class="row">
+    <div class="col-3">
+      <!-- call sidebar -->
+      {% include 'account/parts/sidebar.html' %}
+    </div>
+    <div class="col-9">
+      <div class="myCard p-3 mb-2">
+        <div class="header-content d-flex just justify-content-between">
+          <div class="header-content__text">
+            <h6 class="title">Alamat Saya</h6>
+            <span class="subtitle">Kelola alamat anda.</span>
+          </div>
+          <div class="header-content__cta">
+            <button
+              class="btn btn-sm btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addressModal"
+              data-bs-title="Tambah Alamat"
+            >
+              + Tambah Alamat
+            </button>
+          </div>
+        </div>
+        <div class="content mt-4">
+          <div>
+            <div class="row">
+              <h6 class="title">
+
+              {% if address %}
+              <!-- looping address -->
+              {% for value in address %}
+              <!-- render address parts -->
+              {% include 'account/parts/address-component.html' %}
+              <!-- endfor -->
+              {% endfor %}
+              <!-- else -->
+              {% else %}
+              <h6 class="title">Alamat masih kosong.</h6>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- call modal -->
+  {% include 'account/parts/address-modal.html' %}
+</div>
+{% endblock %}
+
+<!--  -->
+{% block script %}
+<script>
+  $(function () {
+    $('#id_birthday').datetimepicker({
+      locale: 'id',
+      format: 'YYYY-DD-MM',
+    });
+  });
+</script>
+<script src="{% static 'js/wilayah.js' %}"></script>
+<script>
+  const addressModal = document.getElementById('addressModal')
+  const addressForm = document.getElementById('addressForm');
+  
+  addressModal.addEventListener('show.bs.modal', (event) => {
+    // Button that triggered the modal
+    const button = event.relatedTarget
+    // Extract info from data-bs-* attributes
+    const title = button.getAttribute('data-bs-title')
+    const addressId = button.getAttribute('data-bs-addressid')
+    // If necessary, you could initiate an AJAX request here
+    // and then do the updating in a callback.
+
+    // Update the modal's title.
+    const modalTitle = addressModal.querySelector('.modal-title')
+    modalTitle.textContent = title
+
+    // Update action form if edit address
+    if (title === 'Edit Alamat') {
+      urlEdit = `/account/edit_address/${addressId}`
+      addressForm.action = urlEdit
+
+      // Fetch address to edit
+      getAddressById(addressId);
+    } else {
+      addressForm.action = '/account/address/'
+      addressForm.reset()
+    }
+  })
+
+  addressModal.addEventListener('hidden.bs.modal', () => {
+    addressForm.reset()
+
+    citySelectId = addressForm.querySelector('#id_city_id')
+    while (citySelectId.options.length > 0) {
+      citySelectId.remove(0)
+    }
+  })
+
+  const getAddressById = (id) => {
+    const url = `/account/get_address/${id}`
+
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      }
+    })
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      fillEditModal(data[0])
+    })
+  }
+
+  const fillEditModal = (data) => {
+    // initial input form
+    fullNameInput = addressForm.querySelector('#id_full_name');
+    phoneInput = addressForm.querySelector('#id_phone');
+    streetInput = addressForm.querySelector('#id_street');
+    detailAddressInput = addressForm.querySelector('#id_detail_address');
+    postalCodeInput = addressForm.querySelector('#id_postal_code');
+
+    // set value of input form
+    fullNameInput.value = data.full_name;
+    phoneInput.value = data.phone;
+    streetInput.value = data.street;
+    detailAddressInput.value = data.detail_address;
+    postalCodeInput.value = data.postal_code;
+
+    isMainAddressSwitch = addressForm.querySelector('#id_isMainAddress');
+    if (data.isMainAddress) {
+      isMainAddressSwitch.checked = true;
+    } else {
+      isMainAddressSwitch.checked = false;
+    }
+
+    provinceSelectId = addressForm.querySelector('#id_province_id')
+    provinceSelectId.value = data.province_id
+    provinceSelectId.text = data.province
+
+    citySelectId = addressForm.querySelector('#id_city_id')
+    const cityOption = document.createElement('option');
+    cityOption.value = data.city_id
+    cityOption.text = data.city
+    cityOption.selected = true
+    citySelectId.options.add(cityOption);
+
+    provinceNameInput = addressForm.querySelector('#id_province')
+    provinceNameInput.value = data.province
+    cityNameInput = addressForm.querySelector('#id_city')
+    cityNameInput.value = data.city
+  }
+</script>
+{% endblock %}

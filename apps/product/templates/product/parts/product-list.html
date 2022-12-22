@@ -1,0 +1,30 @@
+<!-- load format number -->
+{% load l10n %}
+
+<div class="col-3">
+  <div class="card shadow">
+    <div class="product-item">
+      <img src="{{ product.get_thumbnail }}" class="card-img-top" alt="{{ product.name }}" />
+    </div>
+    <div class="card-body product-desc">
+      <a href="{% url 'profile_store' product.store.slug %}" class="toko"
+        >Toko {{ product.store.name }}</a
+      >
+      <h5 class="card-title mb-0">{{ product.name }}</h5>
+      <p class="card-text">Rp. <span style="font-weight: 600">{{ product.price }}</span></p>
+      <hr />
+      <button
+        data-product="{{ product.id }}"
+        data-action="add"
+        class="btn btn-block btn-primary mb-2 add-btn update-cart"
+      >
+        Masukkan Keranjang
+      </button>
+      <a
+        href="{% url 'detail_product' product.category.slug product.slug %}"
+        class="btn btn-block btn-light"
+        >Detail Produk</a
+      >
+    </div>
+  </div>
+</div>

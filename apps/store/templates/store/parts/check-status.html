@@ -1,0 +1,75 @@
+<div class="dropdown">
+  <button
+    class="btn btn-sm btn-{% if order.status == 'Belum Bayar' %}warning{% elif order.status == 'Dikemas' %}info{% elif order.status == 'Dikirim' %}info{% elif order.status == 'Selesai' %}success{% endif %} dropdown-toggle"
+    type="button"
+    id="dropdownMenuButton"
+    data-toggle="dropdown"
+    aria-expanded="false"
+  >
+    {{ order.status }}
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    {% if order.status == 'Belum Bayar' %}
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Belum Bayar'%}"
+      ><i class="fas fa-clock pr-2"></i> Belum Bayar</a
+    >
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Dikemas'%}"
+      ><i class="fas fa-box-open pr-2"></i> Dikemas</a
+    >
+    <button
+      class="dropdown-item shiping-button"
+      data-toggle="modal"
+      data-target="#shipingModal"
+      data-id="{{ order.id }}"
+      data-action="{% url 'change_order_status' order.id 'Dikirim' %}"
+    >
+      <i class="fas fa-shipping-fast pr-2"></i> Dikirim
+    </button>
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Selesai'%}"
+      ><i class="fas fa-check pr-2"></i> Selesai</a
+    >
+    {% elif order.status == 'Dikemas' %}
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Belum Bayar'%}"
+      ><i class="fas fa-clock pr-2"></i> Belum Bayar</a
+    >
+    <button
+      class="dropdown-item shiping-button"
+      data-toggle="modal"
+      data-target="#shipingModal"
+      data-id="{{ order.id }}"
+      data-action="{% url 'change_order_status' order.id 'Dikirim' %}"
+    >
+      <i class="fas fa-shipping-fast pr-2"></i> Dikirim
+    </button>
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Selesai'%}"
+      ><i class="fas fa-check pr-2"></i> Selesai</a
+    >
+    {% elif order.status == 'Dikirim' %}
+    <!-- <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Belum Bayar'%}"
+      ><i class="fas fa-clock pr-2"></i> Belum Bayar</a
+    >
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Dikemas'%}"
+      ><i class="fas fa-box-open pr-2"></i> Dikemas</a
+    > -->
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Selesai'%}"
+      ><i class="fas fa-check pr-2"></i> Selesai</a
+    >
+    {% else %}
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Belum Bayar'%}"
+      ><i class="fas fa-clock pr-2"></i> Belum Bayar</a
+    >
+    <a class="dropdown-item" href="{% url 'change_order_status' order.id 'Dikemas'%}"
+      ><i class="fas fa-box-open pr-2"></i> Dikemas</a
+    >
+    <button
+      class="dropdown-item shiping-button"
+      data-toggle="modal"
+      data-target="#shipingModal"
+      data-id="{{ order.id }}"
+      data-action="{% url 'change_order_status' order.id 'Dikirim' %}"
+    >
+      <i class="fas fa-shipping-fast pr-2"></i> Dikirim
+    </button>
+    {% endif %}
+  </div>
+</div>

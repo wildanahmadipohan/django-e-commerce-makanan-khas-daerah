@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} {{ store.name }} | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .store-image {
+    width: 5rem;
+  }
+
+  .store-name {
+    padding-left: 2rem;
+  }
+
+  .store-address {
+    padding-left: 2rem;
+    margin-top: -1rem;
+    color: #838894;
+  }
+
+  .store-header {
+    padding: 1rem;
+    width: 40%;
+  }
+
+  .left {
+    border-right: 1px solid #838894;
+    padding-right: 2rem;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="register">
+  <div class="container">
+    <nav aria-label="breadcrumb" class="py-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landingpage' %}">Beranda</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Toko {{ store.name }}</li>
+      </ol>
+    </nav>
+
+    <div class="card shadow store-header">
+      <div class="d-flex">
+        <div class="left">
+          {% if store.image %}
+          <img class="store-image" src="{{ store.image.url }}" />
+          {% else %}
+          <img class="store-image" src="{% static 'images/store.png' %}" />
+          {% endif %}
+        </div>
+        <div class="right">
+          <p class="store-name">Toko {{ store.name }}</p>
+          <p class="store-address">{{ store.regency }}, {{ store.province }}</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mt-5">Semua Produk</h3>
+    <div class="row row-cols-4 gx-4 gy-3 mt-3">
+      {% for product in products %}
+      <!--  -->
+      {% include 'product/parts/product-list.html' %}
+      <!--  -->
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<!-- script block -->
+{% block script %} {% endblock %}

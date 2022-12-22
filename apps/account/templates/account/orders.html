@@ -1,0 +1,189 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Pesanan Saya | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .confirm-btn,
+  .confirm-span {
+    color: #838894;
+  }
+
+  .confirm-span:hover {
+    cursor: text;
+    color: #838894;
+  }
+
+  .confirm-btn:hover {
+    text-decoration: underline;
+  }
+
+  #payment-warning {
+    font-size: 0.8rem;
+    text-align: center;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<div class="container py-3">
+  <div class="row">
+    <div class="col-3">
+      <!-- call sidebar -->
+      {% include 'account/parts/sidebar.html' %}
+    </div>
+    <div class="col-9">
+      <!-- call tab nav order -->
+      {% include 'account/parts/order-tab-nav.html' %}
+
+      <!-- show orders -->
+      {% if orders %}
+      <!-- looping orders -->
+      {% for order in orders %}
+      <div class="myCard p-3 mb-2">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6>#{{ order.id }} - {{ order.store.name }}</h6>
+            {% if order.payment_proof %}
+            <!--  -->
+            {% if order.status == 'Belum Bayar' %}
+            <span class="btn confirm-span btn-sm p-0">Menunggu verifikasi</span>
+            {% else %}
+            <span class="btn confirm-span btn-sm p-0">Pembayaran sudah dikonfirmasi</span>
+            {% endif %}
+            <!--  -->
+            {% else %}
+            <button
+              class="confirm-btn btn p-0 btn-sm"
+              data-bs-toggle="modal"
+              data-bs-target="#confirmModal"
+              data-id="{{ order.id }}"
+              data-total="{{ order.paid_amount }}"
+              data-namarekening="{{ order.store.account_name }}"
+              data-nomorrekening="{{ order.store.account_number }}"
+              data-namabank="{{ order.store.bank_name }}"
+            >
+              Konfirmasi Pembayaran <i class="bi bi-check-circle"></i>
+            </button>
+            {% endif %}
+          </div>
+          <div>
+            <span
+              class="badge bg-{% if order.status == 'Belum Bayar' %}warning text-dark{% elif order.status == 'Dikemas' or order.status == 'Dikirim' %}success{% elif order.status == 'Selesai' %}success{% endif %}"
+              >{{ order.status }}</span
+            >
+          </div>
+        </div>
+
+        <div class="order_data mt-3">
+          <div class="row">
+            <p class="col-6">
+              <strong>Nama:</strong> {{ order.full_name }} <br />
+              <strong>Alamat:</strong> {{ order.street }},
+              <!--  -->
+              {% if order.detail_address %} ({{ order.detail_address }}), {% endif %}
+              <!--  -->
+              {{ order.city }}, <br />
+              {{ order.province }}
+              <br />
+              <strong>Nomor Telepon:</strong> {{ order.phone }} <br />
+            </p>
+            <p class="col-6">
+              <strong>Jasa Pengiriman:</strong> {{order.shiping_method }}-{{order.shiping_service}}
+              <br />
+              {% if order.shiping_receipt %}
+              <strong>Nomor Resi:</strong> {{ order.shiping_receipt }} {% endif %}
+            </p>
+          </div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Produk</th>
+                <th scope="col"></th>
+                <th scope="col">Harga</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in order.items.all %}
+              <tr>
+                <th scope="row">{{ item.product.name }}</th>
+                <td scope="row">
+                  <div style="width: 5rem; height: 3rem; overflow: hidden">
+                    <img
+                      src="{{ item.product.get_thumbnail }}"
+                      style="object-fit: cover; object-position: bottom; width: 100%"
+                    />
+                  </div>
+                </td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.qty }}</td>
+                <td>{{ item.get_total_price }}</td>
+              </tr>
+              <!-- akhir perulangan item -->
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="d-flex justify-content-end">
+            <p>
+              Total Pesanan:
+              <strong><span class="text-danger">Rp. {{ order.paid_amount }}</span></strong>
+            </p>
+          </div>
+          <div class="d-flex justify-content-end">
+            {% if order.status == 'Dikirim' %}
+            <a href="{% url 'order_accepted' order.id %}" class="btn btn-sm btn-primary"
+              >Pesanan Diterima</a
+            >
+            {% else %}
+            <button class="btn btn-sm btn-primary" disabled>Pesanan Diterima</button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <div class="myCard p-3">
+        <span>Belum ada pesananan.</span>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<!-- call modal -->
+{% include 'account/parts/confirm-payment-modal.html' %}
+<!--  -->
+{% endblock %} {% block script %}
+<script>
+  const confirmButtons = document.querySelectorAll('.confirm-btn');
+  const confirmPaymentForm = document.getElementById('confirm-payment-form');
+  const paymentWarning = document.getElementById('payment-warning');
+  const orderIdInput = document.getElementById('orderId');
+
+  confirmButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const orderId = btn.dataset.id;
+      const paidAmount = btn.dataset.total;
+      const accountName = btn.dataset.namarekening;
+      const accountNumber = btn.dataset.nomorrekening;
+      const bankName = btn.dataset.namabank;
+
+      const textWarning = `Lakukan pembayaran senilai Rp. ${paidAmount} ke rekening:
+      Bank: ${bankName}
+      Nomor Rekening: ${accountNumber}
+      a.n: ${accountName}
+      Kemudian upload bukti pembayaran pada form di bawah.`;
+
+      paymentWarning.innerText = textWarning;
+      orderIdInput.value = orderId;
+    });
+  });
+</script>
+{% endblock %}

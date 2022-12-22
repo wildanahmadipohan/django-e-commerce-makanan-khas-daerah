@@ -1,0 +1,73 @@
+- (Done) Make notification success add to cart
+- (Done) Solved bug bagian informasi pembayaran setelah pesanan berhasil dibuat
+- (Alternative) Solved bug peyment_code berubah ketika checkout
+- (Done) View store
+- (Done) Solved bug urutan url profil toko
+- (Done) Membuat fitur flash sale
+- (Done) Cek ongkir menggunakan rajaongkir
+- (Done) Tambah email di register (Done / Pengaturan email di profile)
+- (Done) Multi image product
+- (Done) Tambah weight product / Satuan = Gram
+- (Done) Tambah alamat
+- (Done) Edit alamat dan Hapus alamat
+- (Done) Bagaimana jika belum ada alamat ketika akan membuat pesanan
+- Add To Chart: Check product apakah lagi flash sale atau flash sale berakhir (Tidak Perlu)
+- Menampilkan tanda sesi berakhir di admin seller
+- Mencegah update harga produk ketika lagi flash sale
+- Ubah password
+
+
+
+
+
+
+
+
+
+
+----- checkout -------
+<div class="form-section mt-3">
+      <div class="row pb-3">
+        <div class="myCard px-4 py-2">
+          <form method="POST">
+            {% csrf_token %}
+            <h5 class="my-3">Alamat Pengiriman</h5>
+            <div class="row">
+              <div class="col-6">
+                <div class="mb-3">
+                  <label for="{{ forms.full_name.auto_id }}" class="form-label">Nama Lengkap</label>
+                  {{ forms.full_name }}
+                </div>
+                <div class="mb-3">
+                  <label for="{{ forms.phone.auto_id }}" class="form-label">Nomor Telepon</label>
+                  {{ forms.phone }}
+                </div>
+                <div class="mb-3">
+                  <label for="{{ forms.phone.auto_id }}" class="form-label">Alamat Lengkap</label>
+                  {{ forms.address }}
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="mb-3">
+                  <label for="id_provinsi" class="form-label">Provinsi</label>
+                  <select class="form-select" name="provinsi" id="id_provinsi" required>
+                    <option value="">Pilih Provinsi</option>
+                  </select>
+                  {{ forms.province }}
+                </div>
+                <div class="mb-3">
+                  <label for="id_kabupaten" class="form-label">Kabupaten</label>
+                  <select class="form-select" name="kabupaten" id="id_kabupaten" required>
+                    <option value="">Pilih Kabupaten</option>
+                  </select>
+                  {{ forms.regency }}
+                </div>
+                <div class="mb-3">
+                  <button type="submit" class="btn btn-primary btn-block">Buat Pesanan</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,74 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Daftar | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .register-box {
+    width: 600px;
+  }
+
+  .text-center {
+    background-color: #fcb326;
+    color: white;
+    font-weight: 300;
+  }
+
+  .helptext {
+    font-size: small;
+  }
+
+  .errorlist li {
+    list-style-type: none;
+    font-size: small;
+  }
+
+  form ul li {
+    font-size: small;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="register">
+  <div class="container">
+    <div class="register-box mt-5 mx-auto">
+      <div class="card shadow">
+        <h5 class="text-center py-3">Daftar Akun</h5>
+        <div class="p-3">
+          <form action="." method="post">
+            {% csrf_token %} {{ form.as_p }}
+
+            <div class="form-group">
+              <button class="btn btn-primary mt-3">Daftar</button>
+            </div>
+          </form>
+          <p class="mt-2">Sudah punya akun? <a href="{% url 'login' %}">Login di Sini.</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<!-- script block -->
+{% block script %}
+<script>
+  const usernameInput = document.getElementById('id_username');
+  const password1Input = document.getElementById('id_password1');
+  const password2Input = document.getElementById('id_password2');
+  usernameInput.setAttribute('class', 'form-control');
+  password1Input.setAttribute('class', 'form-control');
+  password2Input.setAttribute('class', 'form-control');
+
+  const errorList = document.querySelector('.errorlist');
+  errorList.className += ' alert alert-danger';
+  errorList.setAttribute('role', 'alert');
+</script>
+{% endblock %}

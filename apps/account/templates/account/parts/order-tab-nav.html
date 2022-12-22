@@ -1,0 +1,66 @@
+{% block style %}
+<style>
+  .order-nav_item {
+    text-align: center;
+    padding: 0.5rem;
+    color: #212529;
+    text-decoration: none;
+  }
+
+  .order-nav_item:hover {
+    color: #fcb326;
+  }
+
+  .order-nav_item.active {
+    border-bottom: solid 2px #fcb326;
+    color: #fcb326;
+  }
+</style>
+{% endblock %}
+
+<div class="myCard order-nav d-flex flex-row justify-content-around mb-5 mt-2" id="order-nav">
+  <a href="{% url 'orders' %}?status=1" class="order-nav_item flex-fill active">Semua</a>
+  <a href="{% url 'orders' %}?status=2" class="order-nav_item flex-fill">Belum Bayar</a>
+  <a href="{% url 'orders' %}?status=3" class="order-nav_item flex-fill">Dikemas</a>
+  <a href="{% url 'orders' %}?status=4" class="order-nav_item flex-fill">Dikirim</a>
+  <a href="{% url 'orders' %}?status=5" class="order-nav_item flex-fill">Selesai</a>
+</div>
+
+{% block script %}
+<script>
+  const orderNav = document.getElementById('order-nav');
+  const navButtons = orderNav.querySelectorAll('.order-nav_item');
+  const orderUrl = new URL(window.location.href);
+  console.log(orderUrl);
+  const status = orderUrl.search.split('=');
+
+  const currentActive = orderNav.getElementsByClassName('active');
+
+  switch (status[1]) {
+    case '1':
+      currentActive[0].className = currentActive[0].className.replace(' active', '');
+      navButtons[0].className += ' active';
+      break;
+    case '2':
+      currentActive[0].className = currentActive[0].className.replace(' active', '');
+      navButtons[1].className += ' active';
+      break;
+    case '3':
+      currentActive[0].className = currentActive[0].className.replace(' active', '');
+      navButtons[2].className += ' active';
+      break;
+    case '4':
+      currentActive[0].className = currentActive[0].className.replace(' active', '');
+      navButtons[3].className += ' active';
+      break;
+    case '5':
+      currentActive[0].className = currentActive[0].className.replace(' active', '');
+      navButtons[4].className += ' active';
+      break;
+    default:
+      currentActive[0].className = currentActive[0].className.replace(' active', '');
+      navButtons[0].className += ' active';
+      break;
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'store/base.html' %}
+
+<!-- block title -->
+{% block title %} Produk {% endblock %}
+
+<!-- block username -->
+{% block username %}{{store.name}}{% endblock %}
+
+<!-- block content -->
+{% block content %}
+<h1 class="h3 mb-2 text-gray-800">Data Produk</h1>
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">Data Produk Saya</h6>
+    <a href="{% url 'seller_add_product' %}" class="btn btn-sm btn-primary ml-5">
+      <i class="fas fa-fw fa-plus"></i>
+    </a>
+  </div>
+  <div class="card-body">
+    {% if messages %} {% for message in messages %}
+    <div class="alert alert-success" role="alert">
+      {{ message }}
+    </div>
+    {% endfor %} {% endif %}
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Nama Produk</th>
+            <th>Gambar</th>
+            <th>kategori</th>
+            <th>Berat</th>
+            <th>Harga</th>
+            <th>Stok</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Nama Produk</th>
+            <th>Gambar</th>
+            <th>kategori</th>
+            <th>Berat</th>
+            <th>Harga</th>
+            <th>Stok</th>
+            <th>Aksi</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% if products %}
+
+          <!-- looping products -->
+          {% for product in products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>
+              <div style="width: 5rem; height: 3rem; overflow: hidden;">
+                <img
+                  src="{{ product.get_thumbnail }}"
+                  alt="{{ product.name }"
+                  style="object-fit: cover; object-position: bottom; width: 100%;"
+                />
+              </div>
+            </td>
+            <td>{{ product.category }}</td>
+            <td class="text-right">{{ product.weight }} Gram</td>
+            <td class="text-right">Rp. {{ product.price }}</td>
+            <td class="text-right">{{ product.stock }}</td>
+            <td class="d-flex justify-content-around">
+              <a href="{% url 'seller_edit_product' product.id %}">
+                <i class="fas fa-fw fa-pen"></i>
+              <a>
+              <a href="{% url 'seller_delete_product' product.id %}">
+                <i class="fas fa-fw fa-trash text-danger"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+          <!-- end looping product -->
+          
+          {% else %}
+          <tr>
+            <td colspan="6">
+              <div class="alert alert-warning" role="alert">
+                Anda belum memiliki produk untuk dijual
+              </div>
+              <a href="{% url 'seller_add_product' %}" class="btn btn-sm btn-primary">Tambah Produk Sekarang</a>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

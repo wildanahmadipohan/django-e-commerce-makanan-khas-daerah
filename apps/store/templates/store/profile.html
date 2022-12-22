@@ -1,0 +1,142 @@
+{% extends 'store/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Produk {% endblock %}
+
+<!-- block username -->
+{% block username %}{{store.name}}{% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .profile-img_container {
+    width: 7rem;
+    height: 7rem;
+    padding: 1rem;
+    border-radius: 4px;
+    border: 1px solid rgba(173, 171, 173, 0.26);
+    margin-right: 1rem;
+  }
+
+  .profile-img {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+{% endblock %}
+
+<!-- block content -->
+{% block content %}
+<h1 class="h3 mb-2 text-gray-800">Pengaturan</h1>
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">Pengaturan Profil Toko</h6>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4">
+        <h6>Profil Toko:</h6>
+        <div class="py-3 d-flex flex-column">
+          <figure class="profile-img_container">
+            {% if store.image %}
+            <img class="profile-img" src="{{ store.image.url }}" />
+            {% else %}
+            <img class="profile-img" src="{% static 'images/store.png' %}" />
+            {% endif %}
+          </figure>
+          <div class="address">
+            <p class="mb-0">
+              <strong>{{ store.name }}</strong>
+            </p>
+            <div class="d-flex">
+            {% if store.street %}
+            <p class="mb-0">
+              {{ store.street }},&nbsp;
+            </p>
+            {% endif %}
+            <!--  -->
+            {% if store.detail_address %}
+            <p class="mb-0">
+              {{ store.detail_address }}
+            </p>
+            {% endif %}
+            </div>
+            <!--  -->
+            {% if store.city and store.province %}
+            <p class="mb-0">
+              <strong>{{ store.city }}, {{ store.province }}, ID {{ store.postal_code }}</strong>
+            </p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-4">
+        <h6>Form Ubah Profil:</h6>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+        
+          <div class="mb-3">
+            <label for="{{ store_profile_form.nama.auto_id }}" class="form-label"
+              >{{ store_profile_form.nama.label }}</label
+            >
+            {{ store_profile_form.nama }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ store_profile_form.foto_profil.auto_id }}" class="form-label"
+              >{{ store_profile_form.foto_profil.label }}</label
+            >
+            {{ store_profile_form.foto_profil }}
+          </div>
+      </div>
+      <div class="col-4">
+        <!-- <div class="p-2"> -->
+           <div class="mb-3">
+            <label for="{{ store_profile_form.province_id.auto_id }}" class="form-label"
+              >{{ store_profile_form.province_id.label }}</label
+            >
+            {{ store_profile_form.province_id }}
+            {{ store_profile_form.province }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ store_profile_form.city_id.auto_id }}" class="form-label"
+              >{{ store_profile_form.city_id.label }}</label
+            >
+            {{ store_profile_form.city_id }}
+            {{ store_profile_form.city }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ store_profile_form.postal_code.auto_id }}" class="form-label"
+              >{{ store_profile_form.postal_code.label }}</label
+            >
+            {{ store_profile_form.postal_code }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ store_profile_form.street.auto_id }}" class="form-label"
+              >{{ store_profile_form.street.label }}</label
+            >
+            {{ store_profile_form.street }}
+          </div>
+          <div class="mb-3">
+            <label for="{{ store_profile_form.alamat_lengkap.auto_id }}" class="form-label"
+              >{{ store_profile_form.alamat_lengkap.label }}</label
+            >
+            {{ store_profile_form.alamat_lengkap }}
+          </div>
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+          </div>
+          <!-- </div> -->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- block script -->
+{% block script %}
+<script src="{% static 'js/wilayah.js' %}"></script>
+{% endblock %}

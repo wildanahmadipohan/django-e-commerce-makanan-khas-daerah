@@ -1,0 +1,201 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} {{ product.name }} | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .list-thumbnail {
+    height: 20rem;
+  }
+
+  .list-thumbnail__item {
+    width: 5rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .list-thumbnail__item:hover {
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<div id="productapp">
+  <section id="product-detail">
+    <div class="container">
+      <nav aria-label="breadcrumb" class="py-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'landingpage' %}">Beranda</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Detail Produk</li>
+        </ol>
+      </nav>
+      <div class="row">
+        <div class="col-6">
+          {% if product.image %}
+          <figure class="product-detail-image">
+            <img :src="mainImage.image" alt="{{ product.name }}" style="width: 100%" />
+          </figure>
+          {% else %}
+          <figure class="product-detail-image">
+            <img src="https://via.placeholder.com/550x350.jpg" alt="{{ product.name }}" />
+          </figure>
+          {% endif %}
+
+          <div class="d-flex justify-content-between px-3">
+            <div class="left">
+              <h5 class="mb-0">Toko {{ product.store.name }}</h5>
+              {% if product.store.regency and product.store.province %}
+              <span style="color: #838894">
+                {{ product.store.regency }}, {{ product.store.province }}
+              </span>
+              {% endif %}
+            </div>
+            <div class="right">
+              <a href="#">Kunjungi Toko</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-2">
+          {% if product.images.all %}
+          <div class="d-flex flex-column list-thumbnail">
+            <div class="list-thumbnail__item" v-for="image in images" v-bind:key="image.id">
+              <img :src="image.thumbnail" style="width: 100%;" @click="changeMainImage(image)">
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="col-4">
+          <h5>{{ product.name }}</h5>
+          Rp.<span style="font-weight: 600"> {{ product.price }}</span>
+          <div class="my-4">
+            <!-- <form> -->
+            <div class="form-group qty-counter">
+              <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                  <button class="btn btn-secondary" id="minus-btn"><i class="bi bi-dash"></i></button>
+                </div>
+                <input
+                  type="number"
+                  id="qty_input"
+                  class="form-control"
+                  value="1"
+                  min="1"
+                  style="text-align: center"
+                />
+                <div class="input-group-prepend">
+                  <button class="btn btn-success" id="plus-btn"><i class="bi bi-plus"></i></button>
+                </div>
+              </div>
+              <!-- <div class="input-group mb-4">
+                <textarea
+                  class="form-control"
+                  id="exampleFormControlTextarea1"
+                  rows="3"
+                  placeholder="Catatan tambahan..."
+                ></textarea>
+              </div> -->
+              <div class="input-group mb-2">
+                <button
+                  data-product="{{ product.id }}"
+                  data-action="add"
+                  id="add-to-cart"
+                  class="btn btn-primary btn-block add-btn"
+                >
+                  Masukkan Keranjang
+                </button>
+              </div>
+            </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5">
+        <h3>Deskripsi Produk</h3>
+        <hr />
+        <div class="row">
+          <div class="col-6">
+            <p><pre>{{ product.description }}</pre></p>
+          </div>
+        </div>
+      </div>
+      {% if similar_products %}
+      <div class="row mt-5 similar-product">
+        <h5>Produk Serupa</h5>
+        <hr />
+        <div class="row row-cols-4 gx-4 gy-3 mt-3">
+          {% for product in similar_products %}
+          <!--  -->
+          {% include 'product/parts/product-list.html' %}
+          <!--  -->
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+<!-- script block -->
+{% block script %}
+{{ imagesstring|json_script:"json-imagesstring" }}
+<script src="https://unpkg.com/vue@next"></script>
+<script>
+  const ProductApp = {
+    data() {
+      return {
+        mainImage: '',
+        images: []
+      }
+    },
+    mounted() {
+      this.images = JSON.parse(JSON.parse(document.getElementById("json-imagesstring").textContent))
+      this.mainImage = this.images[0]
+    },
+    methods: {
+      changeMainImage(image) {
+        this.mainImage = image
+      }
+    }
+  }
+
+  Vue.createApp(ProductApp).mount('#productapp')
+</script>
+<script>
+
+
+  plusButton = document.getElementById('plus-btn');
+  minusButton = document.getElementById('minus-btn');
+  qtyInput = document.getElementById('qty_input');
+  addToCartButton = document.getElementById('add-to-cart');
+
+  plusButton.addEventListener('click', () => {
+    qtyInput.value = parseInt(qtyInput.value) + 1;
+  });
+
+  minusButton.addEventListener('click', () => {
+    if (qtyInput.value !== '1') {
+      qtyInput.value = parseInt(qtyInput.value) - 1;
+    }
+  });
+
+  addToCartButton.addEventListener('click', () => {
+    const productId = addToCartButton.dataset.product;
+    const action = addToCartButton.dataset.action;
+    const dataFrom = addToCartButton.dataset.from;
+
+    if (user === 'AnonymousUser') {
+      location.href = '/login/?next={{ request.path }}';
+    } else {
+      updateCart(productId, action, dataFrom, parseInt(qtyInput.value));
+    }
+  });
+</script>
+{% endblock %}

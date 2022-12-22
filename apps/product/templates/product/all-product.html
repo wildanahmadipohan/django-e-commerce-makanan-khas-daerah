@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Semua Produk | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .page-link {
+    color: #2e4859 !important;
+  }
+
+  .pagination .active .page-link {
+    background-color: #2e4859 !important;
+    color: #ffff !important;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="semua-produk">
+  <div class="container">
+    <nav aria-label="breadcrumb" class="py-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landingpage' %}">Beranda</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Semua Produk</li>
+      </ol>
+    </nav>
+
+    <h3>Semua Produk</h3>
+    <div class="row row-cols-4 gx-4 gy-3 mt-3">
+      {% for product in products %}
+      <!--  -->
+      {% include 'product/parts/product-list.html' %}
+      <!--  -->
+      {% endfor %}
+    </div>
+
+    {% if products.has_other_pages %}
+    <div class="mt-5 mx-auto d-flex justify-content-center">
+      <nav aria-label="Page navigation example">
+        <ul class="pagination">
+          <!-- has previous -->
+          {% if products.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <a class="page-link">Previous</a>
+          </li>
+          {% endif %}
+
+          <!-- looping page list -->
+          {% for i in products.paginator.page_range %}
+          <!-- active pages -->
+          {% if products.number == i %}
+          <li class="page-item active" aria-current="page">
+            <a class="page-link" href="#">{{i}}</a>
+          </li>
+          {% else %}
+          <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+          {% endif %} {% endfor%}
+
+          <!-- has next -->
+          {% if products.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ products.next_page_number }}">Next</a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <a class="page-link">Next</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+    {% endif %}
+  </div>
+</section>
+<!-- <div class="coba">ini coba</div> -->
+{% endblock %}

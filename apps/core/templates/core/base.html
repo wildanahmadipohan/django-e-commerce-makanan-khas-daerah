@@ -1,0 +1,237 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css"
+    />
+
+    <!-- Load app static file -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <!-- datetimepicker -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/flipdown.css' %}" />
+    <script src="{% static 'js/flipdown.js' %}"></script>
+
+    {% block style %}{% endblock %}
+
+    <script>
+      const user = '{{ request.user}}';
+
+      function getToken(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + '=') {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      const csrfToken = getToken('csrftoken');
+      const currentUrl = '{{ request.path }}';
+    </script>
+
+    <title>{% block title %}{% endblock %}Kulineran</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <header class="border-bottom">
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container container-fluid">
+          <a class="navbar-brand" href="{% url 'landingpage' %}">
+            <img src="{% static 'images/Logo.svg' %}" style="width: 70%" alt="Kulineran." />
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <form method="get" action="{% url 'search' %}" class="d-flex me-auto ms-auto">
+              <input
+                name="query"
+                class="form-control me-2"
+                type="search"
+                placeholder="Saya mencari..."
+                aria-label="Search"
+              />
+              <button class="btn btn-outline-primary" type="submit">Cari</button>
+            </form>
+            <ul class="navbar-nav mb-2 mb-lg-0 me-auto">
+              <li class="nav-item">
+                <a
+                  class="nav-link {% if request.path == '/' %}active{% endif %}"
+                  aria-current="page"
+                  href="{% url 'landingpage' %}"
+                  >Beranda</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link {% if request.path == '/products/' %}active{% endif %}"
+                  href="{% url 'products' %}"
+                  >Semua Produk</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Tentang Kami</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav mb-2 mb-lg-0 me-auto">
+              <li>
+                <a class="nav-link" href="{% url 'cart' %}" class="cart-link">
+                  <i class="bi-cart3" style="font-size: 1.3rem"></i>
+                  {% if cart_total != 0 %}
+                  <span class="badge-cart text-center">{{ cart_total }}</span>
+                  {% endif %}
+                </a>
+              </li>
+            </ul>
+            <ul class="navbar-nav mb-2 mb-lg-0">
+              <li class="nav-item d-flex align-items-center">
+                {% if request.user.is_authenticated %}
+                <!--  -->
+                {% if user.account.image %}
+                <img class="img-profile rounded-circle" src="{{ user.account.image.url }}" />
+                {% else %}
+                <img class="img-profile rounded-circle" src="{% static 'images/user.jpg' %}" />
+                {% endif %}
+                <div class="dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    style="max-width: 100px"
+                    href="#"
+                    id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {{ request.user.username }}
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li>
+                      <a class="dropdown-item nav-link" href="{% url 'profile' %}"
+                        ><i class="bi bi-person-fill pr-2"></i> Akun Saya</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item nav-link" href="{% url 'orders' %}"
+                        ><i class="bi bi-receipt"></i> Pesanan Saya</a
+                      >
+                    </li>
+                    <li>
+                      <a class="dropdown-item nav-link" href="{% url 'logout' %}"
+                        ><i class="bi bi-box-arrow-right"></i> Logout</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+                {% else %}
+                <a href="{% url 'register' %}" class="nav-link">Daftar</a> |
+                <a href="{% url 'login' %}" class="nav-link">Login</a>
+                {% endif %}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    {% if messages %} {% for message in messages %}
+
+    <div class="alert alert-success myToast" role="alert">{{ message }}</div>
+
+    {% endfor %} {% endif %}
+
+    <main class="app">{% block content %}{% endblock %}</main>
+
+    <footer class="mt-auto pt-5">
+      <div class="footer-line">
+        <div class="container">
+          <div class="row footer-top">
+            <div class="col-4">
+              <a href="{% url 'landingpage' %}">
+                <img src="{% static 'images/Logo.svg' %}" style="width: 50%" alt="Kulineran." />
+              </a>
+              <p class="pt-4" style="color: #838894">
+                Kulineran adalah sebuah situs toko online<br />jual beli makanan khas daerah<br />di
+                Indonesia
+              </p>
+            </div>
+            <div class="col-2"></div>
+            <div class="col-2">
+              <h6>Kategori</h6>
+              <ul class="footer-information">
+                <li><a href="#">Kue Kering</a></li>
+                <li><a href="#">Kerupuk</a></li>
+                <li><a href="#">Kripik</a></li>
+                <li><a href="#">Abon</a></li>
+              </ul>
+            </div>
+            <div class="col-2">
+              <h6>Layanan</h6>
+              <ul class="footer-information">
+                <li><a href="{% url 'seller_dashboard' %}">ٍSeller Center</a></li>
+                <li><a href="#">Tentang Kami</a></li>
+                <li><a href="#">Kebijakan Privasi</a></li>
+                <li><a href="#">Syarat dan Ketentuan</a></li>
+              </ul>
+            </div>
+            <div class="col-2">
+              <h6>Bantuan</h6>
+              <ul class="footer-information">
+                <li><a href="#">Kontak Kami</a></li>
+                <li><a href="#">Cara Berbelanja</a></li>
+                <li><a href="#">Pengiriman Produk</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h5 class="footer">Copyright 2022 Kulineran. All Right Reserved</h5>
+    </footer>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="{% static 'js/cart.js' %}"></script>
+    <!-- datetimepicker -->
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+    {% block script %}{% endblock %}
+  </body>
+</html>

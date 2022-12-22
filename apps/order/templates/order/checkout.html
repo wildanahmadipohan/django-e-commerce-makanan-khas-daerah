@@ -1,0 +1,707 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- load format number -->
+{% load l10n %}
+
+<!-- block title -->
+{% block title %} Buat Pesanan | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .edit-alamat,
+  .ubah-pengiriman {
+    text-decoration: none;
+    padding-top: 0;
+  }
+
+  .edit-alamat:hover,
+  .ubah-pengiriman:hover {
+    text-decoration: underline;
+  }
+
+  /* loader */
+  .loader-container {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+  }
+
+  .loader-container.visible {
+    display: block;
+  }
+  
+  .lds-roller {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 40px 40px;
+  }
+  .lds-roller div:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: red;
+    margin: -4px 0 0 -4px;
+  }
+  .lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+  }
+  .lds-roller div:nth-child(1):after {
+    top: 63px;
+    left: 63px;
+  }
+  .lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+  }
+  .lds-roller div:nth-child(2):after {
+    top: 68px;
+    left: 56px;
+  }
+  .lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+  }
+  .lds-roller div:nth-child(3):after {
+    top: 71px;
+    left: 48px;
+  }
+  .lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+  }
+  .lds-roller div:nth-child(4):after {
+    top: 72px;
+    left: 40px;
+  }
+  .lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+  }
+  .lds-roller div:nth-child(5):after {
+    top: 71px;
+    left: 32px;
+  }
+  .lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+  }
+  .lds-roller div:nth-child(6):after {
+    top: 68px;
+    left: 24px;
+  }
+  .lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+  }
+  .lds-roller div:nth-child(7):after {
+    top: 63px;
+    left: 17px;
+  }
+  .lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+  }
+  .lds-roller div:nth-child(8):after {
+    top: 56px;
+    left: 12px;
+  }
+  @keyframes lds-roller {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+  <div class="loader-container">
+    <div class="lds-roller">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+  <section id="checkout">
+    <div class="container">
+      <nav aria-label="breadcrumb" class="py-4">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'landingpage' %}">Beranda</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Buat Pesanan</li>
+        </ol>
+      </nav>
+
+      <div class="cart-header">
+        <div class="row">
+          <div class="myCard px-4 py-2">
+            <div class="row d-flex justify-content-between align-items-center">
+              <div class="col-4">
+                <span>Produk</span>
+              </div>
+              <div class="col-7">
+                <div class="row">
+                  <div class="col-4 text-center">
+                    <span class="cart-header__title">Harga Satuan</span>
+                  </div>
+                  <div class="col-4 text-center">
+                    <span class="cart-header__title">Kuantitas</span>
+                  </div>
+                  <div class="col-4 text-center">
+                    <span class="cart-header__title">Total Harga</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% for key, orders in orders.items %}
+      <div class="cart-item mt-3 store_id" id="{{orders.store.id}}-{{orders.store.city_id}}">
+        <div class="row pb-3">
+          <div class="myCard px-4 py-2">
+            <div class="cart-item__content pt-3">
+              <div class="header-store">
+                <h6>{{ orders.store.name }}</h6>
+              </div>
+              <hr />
+              {% for item in orders.items %}
+              <div class="row d-flex justify-content-between align-items-center mb-4">
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-3 cart-item_thumbnail">
+                      <img src="{{ item.product.get_thumbnail }}" alt="{{ item.product.name }}" />
+                    </div>
+                    <div class="col-1"></div>
+                    <div class="col-8">
+                      <h6 class="cart-item__title mb-0">{{ item.product.name }}</h6>
+                      <a class="toko" style="font-size: 0.9rem" href="#"
+                        >{{ item.product.store.name }}</a
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="col-7">
+                  <div class="row">
+                    <div class="col-4 d-flex justify-content-end">
+                      <!-- <span class="cart-item__price align-self-center"
+                        >Rp. {{ item.product.price }}</span
+                      > -->
+                      <div class="d-flex flex-column ">
+                      {% if item.is_flash_sale %}
+                      <span class="cart-item__price align-self-end text-muted text-decoration-line-through"
+                      >Rp. {{ item.product.price }}</span
+                      >
+                      <span class="cart-item__price align-self-end fs-6"
+                      >Rp. {{ item.product.discount_price }}</span
+                      >
+                      {% else %}
+                      <span class="cart-item__price align-self-end"
+                      >Rp. {{ item.product.price }}</span
+                      >
+                      {% endif %}
+                    </div>
+                    </div>
+                    <div class="col-4 d-flex justify-content-end">
+                      <span class="cart-item__qty align-self-center"> x {{ item.qty }} </span>
+                    </div>
+                    <div class="col-4 d-flex justify-content-end">
+                      <span class="align-self-center">Rp. {{ item.get_total }}</span>
+                    </div>
+                    <input
+                      type="hidden"
+                      class="weight-{{orders.store.id}}-{{orders.store.city_id}}"
+                      value="{{item.product.weight}}"
+                    />
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              <div class="d-flex justify-content-end">
+                <table style="border-top: solid 1px #c8c9ca">
+                  <tr>
+                    <td>Total Harga</td>
+                    <td>:</td>
+                    <td align="right">
+                      <input
+                        type="hidden"
+                        id="total-price__{{orders.store.id}}"
+                        value="{{orders.total_price}}"
+                      />
+                      <span id="shiping-{{orders.store.id}}__total_price"
+                        >Rp. {{ orders.total_price }}</span
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="w-100" style="background-color: #ebedf3">
+            <div class="shiping-method d-flex justify-content-end">
+              <span class="pt-3 pe-3">Opsi Pengiriman:</span>
+              <div class="shiping-description">
+                <div class="d-flex justify-content-between pt-3 pe-3">
+                  <span class="pe-5" id="shiping-{{orders.store.id}}__method"></span>
+                  <button
+                    class="btn link-primary ubah-pengiriman"
+                    data-bs-toggle="modal"
+                    data-bs-target="#changeShiping"
+                    data-bs-storeId="{{orders.store.id}}"
+                  >
+                    Ubah
+                  </button>
+                </div>
+              </div>
+              <span class="pt-3 ps-5" id="shiping-{{orders.store.id}}__cost"></span>
+            </div>
+            <div class="shiping-method d-flex justify-content-end pt-1">
+              <table>
+                <tr>
+                  <td>Kode Pembayaran</td>
+                  <td>:</td>
+                  <td align="right">
+                    <span id="shiping-{{orders.store.id}}__payment_code"
+                      >{{ orders.payment_code }}</span
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td>Total Bayar</td>
+                  <td>:</td>
+                  <td align="right">
+                    <span class="cart-item__total-price" id="total-bayar__{{orders.store.id}}">
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end looping orders -->
+      {% endfor %}
+
+      <div class="form-section mt-3">
+        <div class="row pb-3">
+          <div class="myCard px-4 py-2">
+            <h5 class="my-3">Alamat Pengiriman</h5>
+            <div class="row" id="address-container">
+              <!-- content alamat pengiriman dari javascript -->
+            </div>
+            <div class="d-flex justify-content-end mt-5">
+              <form method="POST">
+                {% csrf_token %}
+                <!--  -->
+                {% for key, orders in orders.items %}
+                <input type="hidden" name="paid_amount[{{orders.store.id}}]" value="" />
+                <input type="hidden" name="payment_code[{{orders.store.id}}]" value="" />
+                <input type="hidden" name="shiping_method[{{orders.store.id}}]" value="" />
+                <input type="hidden" name="shiping_service[{{orders.store.id}}]" value="" />
+                <input type="hidden" name="shiping_description[{{orders.store.id}}]" value="" />
+                <input type="hidden" name="shiping_cost[{{orders.store.id}}]" value="" />
+                {% endfor %}
+                <input type="hidden" name="address-id" value="" />
+                <input
+                  type="submit"
+                  name="is-make-order"
+                  class="btn btn-primary"
+                  value="Buat Pesanan"
+                />
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- call modal -->
+  {% include 'account/parts/address-modal.html' %}
+  <!--  -->
+  {% include 'order/parts/change-address-modal.html'%}
+  <!--  -->
+  {% include 'order/parts/change-shiping-modal.html'%}
+  <!--  -->
+  {% endblock %}
+
+  <!-- block script -->
+  {% block script %}
+  <!-- address scripts -->
+  <script>
+    const showLoader = () => {
+      const loader = document.querySelector('.loader-container');
+      document.body.classList.toggle('loader-visible');
+      loader.classList.toggle('visible');
+    }
+
+    const hideLoader = () => {
+      const loader = document.querySelector('.loader-container');
+      document.body.classList.toggle('loader-visible');
+      loader.classList.toggle('visible');
+    }
+
+    // get all address of user
+    const get_all_address = async () => {
+      const url = `/account/get_address/${0}`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+      });
+
+      const data = await response.json();
+      // console.log(data);
+      return data;
+    };
+
+    const getMainAddress = async (id = 0) => {
+      const all_address = await get_all_address();
+
+      let main_address;
+
+      if (id) {
+        main_address = await all_address.address.filter((x) => x.id == id)[0];
+      } else {
+        main_address = await all_address.address.filter((x) => x.isMainAddress == true)[0];
+      }
+
+      return main_address;
+    };
+
+    const addAddresModal = new bootstrap.Modal(document.getElementById('addressModal'), {
+      backdrop: false,
+      focus: true,
+    });
+
+    const setShipingAddress = async (addressId = false) => {
+      showLoader();
+      const addressContainer = document.getElementById('address-container');
+
+      let main_address;
+
+      if (addressId) {
+        main_address = await getMainAddress(addressId);
+      } else {
+        main_address = await getMainAddress();
+      }
+      hideLoader()
+      if (!main_address) {
+        addressContainer.innerHTML = '<p class="mb-0">Alamat masih kosong.</p>';
+        addAddresModal.show();
+      } else {
+        addressContainer.innerHTML = `
+        <input type="hidden" name="destinationId" value="${main_address.city_id}" />
+          <div class="col-3">
+            <h6 class="title">${main_address.full_name} | ${main_address.phone}</h6>
+          </div>
+          <div class="col-7">
+            <p class="mb-0 pb-0">
+              ${main_address.street},
+              ${main_address.detail_address !== null ? `${main_address.detail_address},` : ''},
+              <span class="text-uppercase">
+                ${main_address.city},
+                ${main_address.province},
+                ID ${main_address.postal_code}
+              </span>
+              ${
+                main_address.isMainAddress
+                  ? '<span class="badge bg-transparent text-warning fw-normal border border-warning">Utama</span>'
+                  : ''
+              }
+            </p>
+          </div>
+          <div class="col-2">
+            <button
+              class="btn link-primary edit-alamat"
+              data-bs-toggle="modal"
+              data-bs-target="#changeAddress"
+            >
+              Ganti Alamat
+            </button>
+          </div>
+      `;
+
+        document.querySelector('input[name="address-id"]').value = main_address.id;
+      }
+    };
+
+    setShipingAddress();
+
+    const form = document.getElementById('addressForm');
+    form.action = '{% url "address" %}';
+    const redirectInput = form.querySelector('#redirect');
+    redirectInput.value = 'checkout';
+
+    const addressModal = document.getElementById('addressModal');
+    addressModal.addEventListener('hide.bs.modal', (event) => {
+      history.back();
+    });
+
+    const changeAddressModal = document.getElementById('changeAddress');
+    const changeAddressModalInstance = bootstrap.Modal.getOrCreateInstance(changeAddressModal);
+    const changeAddressForm = document.getElementById('change-address-form');
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      showLoader();
+      const changeAddressModalBody = changeAddressForm.querySelector('.modal-body');
+      let changeAddressContent;
+
+      const all_address = await get_all_address();
+      const main_address = await getMainAddress();
+      hideLoader();
+      all_address.address.forEach((address) => {
+        changeAddressContent += `
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="change-address" id="address-id"
+          value="${address.id}" ${main_address.id == address.id ? 'checked' : ''} />
+          <label class="form-check-label" for="change-address">
+            <h6 class="title">
+              ${address.full_name}
+              <span class="subtitle">| ${address.phone}</span>
+              ${
+                address.isMainAddress
+                  ? '<span class="badge bg-transparent text-warning fw-normal border border-warning"> Utama</span>'
+                  : ''
+              }
+            </h6>
+            <p class="mb-0 pb-0">
+              ${address.street} ${address.detail_address ? `(${address.detail_address})` : ''}
+            </p>
+            <p class="text-uppercase mb-1">
+              ${address.city}, ${address.province}, ID ${address.postal_code}
+            </p>
+            <hr />
+          </label>
+        </div>
+      `;
+      });
+
+      changeAddressModalBody.innerHTML = changeAddressContent;
+    });
+
+    changeAddressForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const addressSelected = changeAddressForm.querySelector(
+        'input[name="change-address"]:checked'
+      ).value;
+
+      setShipingAddress(addressSelected);
+      // sebelum set shiping cost
+      // ambil dahulu currentMethod
+      setShipingCost();
+      changeAddressModalInstance.toggle();
+    });
+
+    // get courier available to backend
+    const couriers = async (origin, destination, weight) => {
+      const url = `/order/couriers/${origin}/${destination}/${weight}/`;
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        },
+      });
+
+      const data = await response.json();
+      return data;
+    };
+
+    const stores = document.querySelectorAll('.store_id');
+
+    const getAvailableCourier = async () => {
+      const main_address = await getMainAddress();
+
+      const destinationId = await main_address.city_id;
+
+      let store_courier = new Map();
+
+      for (let i = 0; i < stores.length; i++) {
+        const [storeId, originId] = stores[i].getAttribute('id').split('-');
+
+        const weightsInputHidden = stores[i].querySelectorAll(`.weight-${storeId}-${originId}`);
+
+        let weights = 0;
+
+        weightsInputHidden.forEach((el) => {
+          weights += parseInt(el.value);
+        });
+
+        const available_courier = await couriers(
+          parseInt(originId),
+          parseInt(destinationId),
+          weights
+        );
+
+        store_courier.set(storeId, available_courier);
+      }
+
+      return store_courier;
+    };
+
+    async function setShipingCost(
+      storeId = false,
+      methodSelected = false,
+      serviceSelected = false
+    ) {
+      showLoader();
+      const store_courier = await getAvailableCourier();
+      hideLoader();
+      for (const [key, value] of store_courier) {
+        const methodSpan = document.querySelector(`#shiping-${key}__method`);
+        const costSpan = document.querySelector(`#shiping-${key}__cost`);
+
+        const totalPrice = document
+          .querySelector(`span#shiping-${key}__total_price`)
+          .textContent.split(' ')[1]
+          .split(',')
+          .join('');
+        const paymentCode = document.querySelector(`span#shiping-${key}__payment_code`).textContent;
+
+        const totalBayarSpan = document.querySelector(`span#total-bayar__${key}`);
+
+        if (methodSelected && serviceSelected) {
+          for (let i = 0; i < value.length; i++) {
+            for (let j = 0; j < value[i].values.length; j++) {
+              if (
+                methodSelected === value[i].name &&
+                serviceSelected === value[i].values[j].service
+              ) {
+                if (storeId == key) {
+                  totalBayarSpan.textContent = `Rp. ${
+                    parseInt(totalPrice) + parseInt(paymentCode) + value[i].values[j].cost[0].value
+                  }`;
+                  methodSpan.textContent = `${value[i].name}-(${value[i].values[j].service})`;
+                  costSpan.textContent = `Rp. ${value[i].values[j].cost[0].value}`;
+
+                  document.querySelector(`input[name="paid_amount[${key}]"]`).value =
+                    parseInt(totalPrice) + parseInt(paymentCode) + value[i].values[j].cost[0].value;
+                  document.querySelector(`input[name="payment_code[${key}]"]`).value =
+                    parseInt(paymentCode);
+                  document.querySelector(`input[name="shiping_method[${key}]"]`).value =
+                    value[i].name;
+                  document.querySelector(`input[name="shiping_service[${key}]"]`).value =
+                    value[i].values[j].service;
+                  document.querySelector(`input[name="shiping_description[${key}]"]`).value =
+                    value[i].values[j].description;
+                  document.querySelector(`input[name="shiping_cost[${key}]"]`).value =
+                    value[i].values[j].cost[0].value;
+                }
+              }
+            }
+          }
+        } else {
+          totalBayarSpan.textContent = `Rp. ${
+            parseInt(totalPrice) + parseInt(paymentCode) + value[0].values[0].cost[0].value
+          }`;
+          methodSpan.textContent = `${value[0].name}-(${value[0].values[0].service})`;
+          costSpan.textContent = `Rp. ${value[0].values[0].cost[0].value}`;
+
+          document.querySelector(`input[name="paid_amount[${key}]"]`).value =
+            parseInt(totalPrice) + parseInt(paymentCode) + value[0].values[0].cost[0].value;
+          document.querySelector(`input[name="payment_code[${key}]"]`).value =
+            parseInt(paymentCode);
+          document.querySelector(`input[name="shiping_method[${key}]"]`).value = value[0].name;
+          document.querySelector(`input[name="shiping_service[${key}]"]`).value =
+            value[0].values[0].service;
+          document.querySelector(`input[name="shiping_description[${key}]"]`).value =
+            value[0].values[0].description;
+          document.querySelector(`input[name="shiping_cost[${key}]"]`).value =
+            value[0].values[0].cost[0].value;
+        }
+      }
+    }
+
+    setShipingCost();
+
+    const shipingModal = document.getElementById('changeShiping');
+    const shipingModalInstance = bootstrap.Modal.getOrCreateInstance(shipingModal);
+
+    shipingModal.addEventListener('show.bs.modal', async (event) => {
+      showLoader();
+      const button = event.relatedTarget;
+      const storeId = button.getAttribute('data-bs-storeId');
+
+      const modalBody = shipingModal.querySelector('.modal-body');
+
+      const shipingForm = shipingModal.querySelector('form');
+
+      const store_courier = await getAvailableCourier();
+
+      let content = '';
+      for (const [key, value] of store_courier) {
+        const [currentMethod, currentService] = document
+          .querySelector(`#shiping-${key}__method`)
+          .textContent.split('-');
+
+        for (let i = 0; i < value.length; i++) {
+          for (let j = 0; j < value[i].values.length; j++) {
+            if (key === storeId) {
+              content += `
+              <input type="hidden" name="store_id" value="${key}" />
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="change-shiping" id="shiping-id"
+                value="${value[i].name}-${value[i].values[j].service}" ${
+                currentMethod == value[i].name &&
+                currentService.includes(value[i].values[j].service)
+                  ? 'checked'
+                  : ''
+              } />
+                <label class="form-check-label" for="change-shiping">
+                  <h6 class="title">
+                    ${value[i].values[j].service}
+                    <span class="cart-item__total-price ps-2"> ${
+                      value[i].values[j].cost[0].value
+                    } </span>
+                  </h6>
+                  <p class="mb-0 pb-0 subtitle">${value[i].name}</p>
+                  <hr />
+                </label>
+              </div>
+            `;
+            }
+          }
+        }
+      }
+
+      modalBody.innerHTML = content;
+      hideLoader();
+
+      shipingForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const shipingSelected = shipingForm.querySelector(
+          'input[name="change-shiping"]:checked'
+        ).value;
+        const [methodSelected, serviceSelected] = shipingSelected.split('-');
+
+        const storeId = shipingForm.querySelector('input[name="store_id"]').value;
+
+        setShipingCost(storeId, methodSelected, serviceSelected);
+        shipingModalInstance.toggle();
+      });
+    });
+  </script>
+  {% endblock %}
+</div>

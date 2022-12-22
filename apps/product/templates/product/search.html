@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Pencarian | {% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="pencarian">
+  <div class="container">
+    <h3 class="my-4">Hasil pencarian untuk "{{ query }}"</h3>
+    <div class="row row-cols-4 gx-4 gy-3 mt-3">
+      {% for product in products %}
+      <!--  -->
+      {% include 'product/parts/product-list.html' %}
+      <!--  -->
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<!-- <div class="coba">ini coba</div> -->
+{% endblock %}

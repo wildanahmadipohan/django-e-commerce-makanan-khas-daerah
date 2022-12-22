@@ -1,0 +1,110 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Pesanan Saya | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .title {
+    margin-bottom: 0;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<div class="container py-3">
+  <div class="row">
+    <div class="col-3">
+      <!-- call sidebar -->
+      {% include 'account/parts/sidebar.html' %}
+    </div>
+    <div class="col-9">
+      <div class="myCard p-3 mb-2">
+        <h6 class="title">Profil Saya</h6>
+        <span class="subtitle">Kelola informasi profil anda.</span>
+        <div class="content mt-4">
+          <div>
+            <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-6">
+                  <div class="mb-3">
+                    <label for="{{ user_edit_form.first_name.auto_id }}" class="form-label"
+                      >{{ user_edit_form.first_name.label }}</label
+                    >
+                    {{ user_edit_form.first_name }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="{{ user_edit_form.last_name.auto_id }}" class="form-label"
+                      >{{ user_edit_form.last_name.label }}</label
+                    >
+                    {{ user_edit_form.last_name }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="{{ user_edit_form.email.auto_id }}" class="form-label"
+                      >{{ user_edit_form.email.label }}</label
+                    >
+                    {{ user_edit_form.email }}
+                  </div>
+                  <div class="mb-3">
+                    <label for="{{ account_edit_form.phone.auto_id }}" class="form-label"
+                      >{{ account_edit_form.phone.label }}</label
+                    >
+                    {{ account_edit_form.phone }}
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="mb-3">
+                    <label for="{{ account_edit_form.gender.auto_id }}" class="form-label"
+                      >{{ account_edit_form.gender.label }}</label
+                    >
+                    {{ account_edit_form.gender }}
+                  </div>
+                  <div class="mb-3" style="position: relative">
+                    <label for="{{ account_edit_form.birthday.auto_id }}" class="form-label"
+                      >{{ account_edit_form.birthday.label }}</label
+                    >
+                    {{ account_edit_form.birthday }}
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="{{ account_edit_form.image.auto_id }}" class="form-label"
+                      >{{ account_edit_form.image.label }}</label
+                    >
+                    {{ account_edit_form.image }}
+                  </div>
+
+                  <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- call modal -->
+
+  <!--  -->
+  {% endblock %} {% block script %}
+  <script>
+    $(function () {
+      $('#id_birthday').datetimepicker({
+        locale: 'id',
+        format: 'YYYY-DD-MM',
+      });
+    });
+  </script>
+  {% endblock %}
+</div>

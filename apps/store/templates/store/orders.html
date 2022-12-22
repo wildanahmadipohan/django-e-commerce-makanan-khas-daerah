@@ -1,0 +1,152 @@
+{% extends 'store/base.html' %}
+
+<!-- block title -->
+{% block title %} Pesanan {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .lihat-bukti {
+    padding: 0;
+    border: none;
+    background: none;
+    color: inherit;
+  }
+
+  .lihat-bukti:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+
+<!-- block username -->
+{% block username %}{{store.name}}{% endblock %}
+
+<!-- block content -->
+{% block content %}
+<h1 class="h3 mb-2 text-gray-800">Pesanan</h1>
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">Data Pesanan</h6>
+  </div>
+  <div class="card-body">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link active"
+          id="all-tab"
+          data-toggle="tab"
+          href="#all"
+          role="tab"
+          aria-controls="all"
+          aria-selected="true"
+          >Semua</a
+        >
+      </li>
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link"
+          id="paid-tab"
+          data-toggle="tab"
+          href="#paid"
+          role="tab"
+          aria-controls="paid"
+          aria-selected="false"
+          >Belum Bayar</a
+        >
+      </li>
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link"
+          id="packing-tab"
+          data-toggle="tab"
+          href="#packing"
+          role="tab"
+          aria-controls="packing"
+          aria-selected="false"
+          >Dikemas</a
+        >
+      </li>
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link"
+          id="shiping-tab"
+          data-toggle="tab"
+          href="#shiping"
+          role="tab"
+          aria-controls="shiping"
+          aria-selected="false"
+          >Dikirim</a
+        >
+      </li>
+      <li class="nav-item" role="presentation">
+        <a
+          class="nav-link"
+          id="done-tab"
+          data-toggle="tab"
+          href="#done"
+          role="tab"
+          aria-controls="done"
+          aria-selected="false"
+          >Selesai</a
+        >
+      </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <!--  -->
+      {% include 'store/parts/orders-tabpane.html' %}
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<!-- payment modal -->
+{% include 'store/parts/payment-modal.html' %}
+<!-- shiping modal -->
+{% include 'store/parts/shiping-modal.html' %}
+<!-- end modal -->
+
+{% endblock %}
+
+<!-- block script -->
+{% block script %}
+<script>
+  $('#myTab a').on('click', function (event) {
+    event.preventDefault();
+    $(this).tab('show');
+  });
+
+  // payment modal
+  const modal = document.getElementById('myModal');
+  const imageBox = document.getElementById('image-bukti');
+  const buktiButtons = document.querySelectorAll('.lihat-bukti');
+
+  buktiButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      modal.style.display = 'block';
+      imageBox.src = btn.dataset.source;
+    });
+  });
+
+  const span = document.getElementsByClassName('close')[0];
+  span.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  // shiping modal
+  const shipingButtons = document.querySelectorAll('.shiping-button');
+  const shipingForm = document.getElementById('shiping-form');
+
+  shipingButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const orderId = btn.dataset.id;
+      const urlAction = btn.dataset.action;
+      shipingForm.setAttribute('action', urlAction);
+    });
+  });
+</script>
+{% endblock %}

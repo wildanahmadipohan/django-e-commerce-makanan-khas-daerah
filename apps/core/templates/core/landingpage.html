@@ -1,0 +1,247 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Wellcome | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .discount {
+    background-color: #f78e33;
+    color: #fff;
+    width: 3rem;
+    position: absolute;
+    right: 0;
+    z-index: 999;
+    text-align: center;
+    padding: 2px;
+    border-radius: 0 0 0 8px;
+  }
+
+  .time-section {
+    display: inline-block;
+    margin-left: 2px;
+  }
+
+  .time-section:first-child {
+    margin-left: 0;
+  }
+
+  .time-section > .value {
+    background-color: #202020;
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #fff;
+    line-height: 30px;
+    text-align: center;
+  }
+
+  .countDownAlert {
+    display: none;
+    padding: 20px;
+    border-radius: 3px;
+    background-color: #f78e33; /* Red */
+    color: white;
+    margin: 0 auto;
+    width: 40%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    position: fixed;
+    z-index: 999999;
+  }
+
+  /* The close button */
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  /* When moving the mouse over the close button */
+  .closebtn:hover {
+    color: black;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="row px-5">
+      <div class="col-6">
+        <h1 class="title">Pengen makan<br />makanan khas daerah?</h1>
+        <p class="subtitle mt-3">
+          Di Kulineran kamu bisa temukan berbagai<br />makanan khas daerah di Indonesia
+        </p>
+        <a href="#rekomendasi" class="btn btn-primary mt-5">Belanja Sekarang</a>
+      </div>
+      <div class="col-6 d-flex justify-content-end">
+        <img src="{% static 'core/images/HeroImage.png' %}" style="width: 250px" alt="Hero Image" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="kategori">
+  <div class="container py-5">
+    <h3>Kategori</h3>
+    <div class="row row-cols-4 gx-4 mt-3">
+      {% for category in menu_categories %}
+      <div class="col-3">
+        <div class="card shadow">
+          <div class="container-img">
+            <a href="{% url 'category' category.slug %}">
+              <img
+                src="{{ category.get_thumbnail }}"
+                class="card-img-top"
+                alt="{{ product.name }}"
+              />
+              <div class="overlay">{{ category.name }}</div>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% if flash_product_today %}
+<section id="kategori">
+  <div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between">
+      <h3>Flash Sale</h3>
+      <div id="flipdown" class="flipdown ms-4"></div>
+      <h5><a href="{% url 'flash_sale' %}" class="link-secondary">Selengkapnya</a></h5>
+    </div>
+    <div class="row row-cols-4 gx-4 gy-3 mt-3">
+      {% for flash_product in flash_product_today %}
+      <!--  -->
+      {% include 'product/parts/product-flash-list.html' %}
+      <!--  -->
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section id="rekomendasi">
+  <div class="container py-5">
+    <h3>Rekomendasi untuk anda</h3>
+    <div class="row row-cols-4 gx-4 gy-3 mt-3">
+      {% for product in products %}
+      <!--  -->
+      {% include 'product/parts/product-list.html' %}
+      <!--  -->
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section style="background-color: #f78e33">
+  <div class="container py-5">
+    <div class="row px-5">
+      <div class="col-6">
+        <h2 style="color: white">
+          Temukan lebih banyak pelanggan dengan menjual produkmu sekarang juga!
+        </h2>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'seller_dashboard' %}" class="btn btn-primary mt-5">Kelola Toko</a>
+        {% else %}
+        <a href="{% url 'register' %}" class="btn btn-primary mt-5">Daftar Sekarang</a>
+        {% endif %}
+      </div>
+      <div class="col-6 d-flex justify-content-end">
+        <img
+          src="{% static 'core/images/sampul-toko.png' %}"
+          style="width: 322px"
+          alt="Banner Toko"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+<!--  -->
+{% block script %}
+<script>
+  const numberSession = parseInt('{{ number_session }}');
+  let endSession;
+  const today = new Date();
+  const test = today.setHours(22, 17, 0);
+
+  switch (numberSession) {
+    case 1:
+      today.setHours(12, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    case 2:
+      today.setHours(13, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    case 3:
+      today.setHours(18, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    case 4:
+      today.setHours(21, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    default:
+      today.setHours(23, 59, 59);
+      endSession = today.getTime() / 1000;
+      break;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Set up FlipDown
+    var flipdown = new FlipDown(endSession, {
+      headings: ['', '', '', ''],
+    })
+
+      // Start the countdown
+      .start()
+
+      // Do something when the countdown ends
+      .ifEnded(() => {
+        console.log('Flash Sale telah berakhir, Terima kasih.')
+      });
+  });
+
+  function showAlert() {
+    // Get all elements with class="closebtn"
+    var close = document.getElementsByClassName('closebtn');
+    var i;
+
+    // Loop through all close buttons
+    for (i = 0; i < close.length; i++) {
+      // When someone clicks on a close button
+      close[i].onclick = function () {
+        // Get the parent of <span class="closebtn"> (<div class="alert">)
+        var div = this.parentElement;
+
+        // Set the opacity of div to 0 (transparent)
+        div.style.opacity = '0';
+
+        // Hide the div after 600ms (the same amount of milliseconds it takes to fade out)
+        setTimeout(function () {
+          div.style.display = 'none';
+        }, 600);
+      };
+    }
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Login | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .login-box {
+    width: 400px;
+  }
+
+  .text-center {
+    background-color: #fcb326;
+    color: white;
+    font-weight: 300;
+  }
+
+  .errorlist li {
+    list-style-type: none;
+    font-size: small;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="register">
+  <div class="container">
+    <div class="login-box mt-5 mx-auto">
+      <div class="card shadow">
+        <h5 class="text-center py-3">
+          Selamat Datang <br />
+          Silahkan Login
+        </h5>
+        <div class="p-3">
+          <form action="." method="post" class="">
+            {% csrf_token %} {{ form.as_p }}
+            <!--  -->
+            {% if request.GET.next %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}" />
+            {% endif %}
+            <div class="form-group">
+              <button class="btn btn-primary mt-3">Masuk</button>
+            </div>
+          </form>
+          <p class="mt-2">Belum punya akun? <a href="{% url 'register' %}">Daftar di Sini.</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+<!-- script block -->
+{% block script %}
+<script>
+  const usernameInput = document.getElementById('id_username');
+  const passwordInput = document.getElementById('id_password');
+  usernameInput.setAttribute('class', 'form-control');
+  passwordInput.setAttribute('class', 'form-control');
+
+  const errorList = document.querySelector('.errorlist');
+  errorList.className += ' alert alert-danger';
+  errorList.setAttribute('role', 'alert');
+</script>
+{% endblock %}

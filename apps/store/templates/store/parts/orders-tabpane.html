@@ -1,0 +1,470 @@
+<div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+  <div class="pt-2">
+    {% if orders %}
+    <!-- looping orders -->
+    {% for order in orders %}
+    <div class="order_box card p-3 mb-2">
+      <div class="order__header d-flex justify-content-between">
+        <div>
+          <h5>#{{ order.id }} - {{ order.full_name }}</h5>
+          {% if order.payment_proof %}
+          <button
+            type="button"
+            class="lihat-bukti btn btn-sm"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            data-source="{{ order.payment_proof.url }}"
+          >
+            Bukti Pembayaran <i class="fas fa-eye"></i>
+          </button>
+          <!--  -->
+          {% else %}
+          <span><small>Belum ada bukti pembayaran.</small></span>
+          {% endif %}
+        </div>
+        <div>
+          <!-- check status -->
+          {% include 'store/parts/check-status.html' %}
+        </div>
+      </div>
+
+      <div class="order_data mt-3">
+        <div class="row">
+          <p class="col-6">
+            <strong>Nama:</strong> {{ order.full_name }} <br />
+            <strong>Alamat:</strong> {{ order.street }},
+            <!--  -->
+            {% if order.detail_address %} ({{ order.detail_address }}), {% endif %}
+            <!--  -->
+            {{ order.city }}, <br />
+            {{ order.province }}
+            <br />
+            <strong>Nomor Telepon:</strong> {{ order.phone }} <br />
+          </p>
+          <p class="col-6">
+            <strong>Jasa Pengiriman:</strong> {{ order.shiping_method }}-{{order.shiping_service}}
+            <br />
+            {% if order.shiping_receipt %}
+            <strong>Nomor Resi:</strong> {{ order.shiping_receipt }} {% endif %}
+          </p>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Produk</th>
+              <th scope="col"></th>
+              <th scope="col">Harga</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <th scope="row">{{ item.product.name }}</th>
+              <td scope="row">
+                <div style="width: 5rem; height: 3rem; overflow: hidden">
+                  <img
+                    src="{{ item.product.get_thumbnail }}"
+                    style="object-fit: cover; object-position: bottom; width: 100%"
+                  />
+                </div>
+              </td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.qty }}</td>
+              <td>{{ item.get_total_price }}</td>
+            </tr>
+            <!-- akhir perulangan item -->
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+          <p>
+            Total Pesanan:
+            <strong><span class="text-danger">Rp. {{ order.paid_amount }}</span></strong>
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <p>Belum ada pesanan</p>
+    {% endif %}
+  </div>
+</div>
+<div class="tab-pane fade" id="paid" role="tabpanel" aria-labelledby="paid-tab">
+  <div class="pt-2">
+    {% if orders.paidCount %}
+    <!-- looping orders -->
+    {% for order in orders %} {% if order.status == 'Belum Bayar' %}
+    <div class="order_box card p-3 mb-2">
+      <div class="order__header d-flex justify-content-between">
+        <div>
+          <h5>#{{ order.id }} - {{ order.full_name }}</h5>
+          {% if order.payment_proof %}
+          <button
+            type="button"
+            class="lihat-bukti btn btn-sm"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            data-source="{{ order.payment_proof.url }}"
+          >
+            Bukti Pembayaran <i class="fas fa-eye"></i>
+          </button>
+          <!--  -->
+          {% else %}
+          <span><small>Belum ada bukti pembayaran.</small></span>
+          {% endif %}
+        </div>
+        <div>
+          <!-- check status -->
+          {% include 'store/parts/check-status.html' %}
+        </div>
+      </div>
+
+      <div class="order_data mt-3">
+        <div class="row">
+          <p class="col-6">
+            <strong>Nama:</strong> {{ order.full_name }} <br />
+            <strong>Alamat:</strong> {{ order.street }},
+            <!--  -->
+            {% if order.detail_address %} ({{ order.detail_address }}), {% endif %}
+            <!--  -->
+            {{ order.city }}, <br />
+            {{ order.province }}
+            <br />
+            <strong>Nomor Telepon:</strong> {{ order.phone }} <br />
+          </p>
+          <p class="col-6">
+            <strong>Jasa Pengiriman:</strong> {{ order.shiping_method }}-{{order.shiping_service}}
+            <br />
+            {% if order.shiping_receipt %}
+            <strong>Nomor Resi:</strong> {{ order.shiping_receipt }} {% endif %}
+          </p>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Produk</th>
+              <th scope="col"></th>
+              <th scope="col">Harga</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <th scope="row">{{ item.product.name }}</th>
+              <td scope="row">
+                <div style="width: 5rem; height: 3rem; overflow: hidden">
+                  <img
+                    src="{{ item.product.get_thumbnail }}"
+                    style="object-fit: cover; object-position: bottom; width: 100%"
+                  />
+                </div>
+              </td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.qty }}</td>
+              <td>{{ item.get_total_price }}</td>
+            </tr>
+            <!-- akhir perulangan item -->
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+          <p>
+            Total Pesanan:
+            <strong><span class="text-danger">Rp. {{ order.paid_amount }}</span></strong>
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endif %} {% endfor %} {% else %}
+    <p>Belum ada pesanan yang belum dibayar.</p>
+    {% endif %}
+  </div>
+</div>
+<div class="tab-pane fade" id="packing" role="tabpanel" aria-labelledby="packing-tab">
+  <div class="pt-2">
+    {% if orders.packingCount %}
+    <!-- looping orders -->
+    {% for order in orders %} {% if order.status == 'Dikemas' %}
+    <div class="order_box card p-3 mb-2">
+      <div class="order__header d-flex justify-content-between">
+        <div>
+          <h5>#{{ order.id }} - {{ order.full_name }}</h5>
+          {% if order.payment_proof %}
+          <button
+            type="button"
+            class="lihat-bukti btn btn-sm"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            data-source="{{ order.payment_proof.url }}"
+          >
+            Bukti Pembayaran <i class="fas fa-eye"></i>
+          </button>
+          <!--  -->
+          {% else %}
+          <span><small>Belum ada bukti pembayaran.</small></span>
+          {% endif %}
+        </div>
+        <div>
+          <!-- check status -->
+          {% include 'store/parts/check-status.html' %}
+        </div>
+      </div>
+
+      <div class="order_data mt-3">
+        <div class="row">
+          <p class="col-6">
+            <strong>Nama:</strong> {{ order.full_name }} <br />
+            <strong>Alamat:</strong> {{ order.street }},
+            <!--  -->
+            {% if order.detail_address %} ({{ order.detail_address }}), {% endif %}
+            <!--  -->
+            {{ order.city }}, <br />
+            {{ order.province }}
+            <br />
+            <strong>Nomor Telepon:</strong> {{ order.phone }} <br />
+          </p>
+          <p class="col-6">
+            <strong>Jasa Pengiriman:</strong> {{ order.shiping_method }}-{{order.shiping_service}}
+            <br />
+            {% if order.shiping_receipt %}
+            <strong>Nomor Resi:</strong> {{ order.shiping_receipt }} {% endif %}
+          </p>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Produk</th>
+              <th scope="col"></th>
+              <th scope="col">Harga</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <th scope="row">{{ item.product.name }}</th>
+              <td scope="row">
+                <div style="width: 5rem; height: 3rem; overflow: hidden">
+                  <img
+                    src="{{ item.product.get_thumbnail }}"
+                    style="object-fit: cover; object-position: bottom; width: 100%"
+                  />
+                </div>
+              </td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.qty }}</td>
+              <td>{{ item.get_total_price }}</td>
+            </tr>
+            <!-- akhir perulangan item -->
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+          <p>
+            Total Pesanan:
+            <strong><span class="text-danger">Rp. {{ order.paid_amount }}</span></strong>
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endif %} {% endfor %} {% else %}
+    <p>Belum ada pesanan yang sedang Dikemas.</p>
+    {% endif %}
+  </div>
+</div>
+<div class="tab-pane fade" id="shiping" role="tabpanel" aria-labelledby="shiping-tab">
+  <div class="pt-2">
+    {% if orders.shipingCount %}
+    <!-- looping orders -->
+    {% for order in orders %} {% if order.status == 'Dikirim' %}
+    <div class="order_box card p-3 mb-2">
+      <div class="order__header d-flex justify-content-between">
+        <div>
+          <h5>#{{ order.id }} - {{ order.full_name }}</h5>
+          {% if order.payment_proof %}
+          <button
+            type="button"
+            class="lihat-bukti btn btn-sm"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            data-source="{{ order.payment_proof.url }}"
+          >
+            Bukti Pembayaran <i class="fas fa-eye"></i>
+          </button>
+          <!--  -->
+          {% else %}
+          <span><small>Belum ada bukti pembayaran.</small></span>
+          {% endif %}
+        </div>
+        <div>
+          <!-- check status -->
+          {% include 'store/parts/check-status.html' %}
+        </div>
+      </div>
+
+      <div class="order_data mt-3">
+        <div class="row">
+          <p class="col-6">
+            <strong>Nama:</strong> {{ order.full_name }} <br />
+            <strong>Alamat:</strong> {{ order.street }},
+            <!--  -->
+            {% if order.detail_address %} ({{ order.detail_address }}), {% endif %}
+            <!--  -->
+            {{ order.city }}, <br />
+            {{ order.province }}
+            <br />
+            <strong>Nomor Telepon:</strong> {{ order.phone }} <br />
+          </p>
+          <p class="col-6">
+            <strong>Jasa Pengiriman:</strong> {{ order.shiping_method }}-{{order.shiping_service}}
+            <br />
+            {% if order.shiping_receipt %}
+            <strong>Nomor Resi:</strong> {{ order.shiping_receipt }} {% endif %}
+          </p>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Produk</th>
+              <th scope="col"></th>
+              <th scope="col">Harga</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <th scope="row">{{ item.product.name }}</th>
+              <td scope="row">
+                <div style="width: 5rem; height: 3rem; overflow: hidden">
+                  <img
+                    src="{{ item.product.get_thumbnail }}"
+                    style="object-fit: cover; object-position: bottom; width: 100%"
+                  />
+                </div>
+              </td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.qty }}</td>
+              <td>{{ item.get_total_price }}</td>
+            </tr>
+            <!-- akhir perulangan item -->
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+          <p>
+            Total Pesanan:
+            <strong><span class="text-danger">Rp. {{ order.paid_amount }}</span></strong>
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endif %} {% endfor %} {% else %}
+    <p>Belum ada pesanan yang sedang Dikirim.</p>
+    {% endif %}
+  </div>
+</div>
+<div class="tab-pane fade" id="done" role="tabpanel" aria-labelledby="done-tab">
+  <div class="pt-2">
+    {% if orders.doneCount %}
+    <!-- looping orders -->
+    {% for order in orders %} {% if order.status == 'Selesai' %}
+    <div class="order_box card p-3 mb-2">
+      <div class="order__header d-flex justify-content-between">
+        <div>
+          <h5>#{{ order.id }} - {{ order.full_name }}</h5>
+          {% if order.payment_proof %}
+          <button
+            type="button"
+            class="lihat-bukti btn btn-sm"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            data-source="{{ order.payment_proof.url }}"
+          >
+            Bukti Pembayaran <i class="fas fa-eye"></i>
+          </button>
+          <!--  -->
+          {% else %}
+          <span><small>Belum ada bukti pembayaran.</small></span>
+          {% endif %}
+        </div>
+        <div>
+          <!-- check status -->
+          {% include 'store/parts/check-status.html' %}
+        </div>
+      </div>
+
+      <div class="order_data mt-3">
+        <div class="row">
+          <p class="col-6">
+            <strong>Nama:</strong> {{ order.full_name }} <br />
+            <strong>Alamat:</strong> {{ order.street }},
+            <!--  -->
+            {% if order.detail_address %} ({{ order.detail_address }}), {% endif %}
+            <!--  -->
+            {{ order.city }}, <br />
+            {{ order.province }}
+            <br />
+            <strong>Nomor Telepon:</strong> {{ order.phone }} <br />
+          </p>
+          <p class="col-6">
+            <strong>Jasa Pengiriman:</strong> {{ order.shiping_method }}-{{order.shiping_service}}
+            <br />
+            {% if order.shiping_receipt %}
+            <strong>Nomor Resi:</strong> {{ order.shiping_receipt }} {% endif %}
+          </p>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Produk</th>
+              <th scope="col"></th>
+              <th scope="col">Harga</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr>
+              <th scope="row">{{ item.product.name }}</th>
+              <td scope="row">
+                <div style="width: 5rem; height: 3rem; overflow: hidden">
+                  <img
+                    src="{{ item.product.get_thumbnail }}"
+                    style="object-fit: cover; object-position: bottom; width: 100%"
+                  />
+                </div>
+              </td>
+              <td>{{ item.price }}</td>
+              <td>{{ item.qty }}</td>
+              <td>{{ item.get_total_price }}</td>
+            </tr>
+            <!-- akhir perulangan item -->
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+          <p>
+            Total Pesanan:
+            <strong><span class="text-danger">Rp. {{ order.paid_amount }}</span></strong>
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endif %} {% endfor %} {% else %}
+    <p>Belum ada pesanan yang sudah selesai.</p>
+    {% endif %}
+  </div>
+</div>

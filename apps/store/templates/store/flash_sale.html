@@ -1,0 +1,166 @@
+{% extends 'store/base.html' %}
+
+<!-- block title -->
+{% block title %} FLash Sale Toko {% endblock %} {% block style %}
+<!--  -->
+{% endblock %}
+
+<!-- block username -->
+{% block username %}{{store.name}}{% endblock %}
+
+<!-- block content -->
+{% block content %}
+<h1 class="h3 mb-2 text-gray-800">FLash Sale Toko</h1>
+<div class="card shadow mb-4">
+  <div class="card-header py-3 d-flex align-items-center">
+    <h6 class="m-0 font-weight-bold text-primary">Flash Sale Toko Saya</h6>
+    <!-- <a href="{% url 'seller_add_product' %}" class="btn btn-sm btn-primary ml-5">
+      <i class="fas fa-fw fa-plus"></i> Buat
+    </a> -->
+    <button class="btn btn-sm btn-primary ml-5" data-toggle="modal" data-target="#flashSaleModal">
+      <i class="fas fa-fw fa-plus"></i> Buat
+    </button>
+  </div>
+  <div class="card-body">
+    {% if messages %} {% for message in messages %}
+    <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% endfor %} {% endif %}
+    <div class="table-responsive">
+      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Nama Produk</th>
+            <th>Gambar</th>
+            <th>Harga Awal</th>
+            <th>Diskon</th>
+            <th>Harga Diskon</th>
+            <th>Tanggal Sesi</th>
+            <th>Waktu Sesi</th>
+            <th>Aktif / Nonaktikan</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Nama Produk</th>
+            <th>Gambar</th>
+            <th>Harga Awal</th>
+            <th>Diskon</th>
+            <th>Harga Diskon</th>
+            <th>Tanggal Sesi</th>
+            <th>Waktu Sesi</th>
+            <th>Aktif / Nonaktikan</th>
+            <th>Aksi</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% if flash_sale %}
+
+          <!-- looping products -->
+          {% for flash in flash_sale %}
+          <tr>
+            <td>{{ flash.product.name }}</td>
+            <td>
+              <div style="width: 5rem; height: 3rem; overflow: hidden">
+                <img
+                  src="{{ flash.product.get_thumbnail }}"
+                  alt="{{ flash.product.name }"
+                  style="object-fit: cover; object-position: bottom; width: 100%"
+                />
+              </div>
+            </td>
+            <td>Rp. {{ flash.product.price }}</td>
+            <td>{{ flash.product.discount }}% OFF</td>
+            <td>Rp. {{ flash.product.discount_price }}</td>
+            <td>{{flash.flash_date|date:"d/m/Y"}}</td>
+            <td>
+              {% if flash.session_number == 1 %}
+              00.00 - 12.00
+              {% elif flash.session_number == 2 %}
+              12.00 - 13.00
+              {% elif flash.session_number == 3 %}
+              13.00 - 18.00
+              {% elif flash.session_number == 4 %}
+              18.00 - 21.00
+              {% else %}
+              21.00 - 00.00
+              {% endif %}
+            </td>
+            <td width="10%" class="text-center">
+              <div class="custom-control custom-switch">
+                <input
+                  type="checkbox"
+                  class="custom-control-input"
+                  id="activate{{forloop.counter0}}"
+                  onclick="activate(event, '{{flash.id}}')"
+                  {% if flash.is_active %}checked{% endif %}
+                />
+                <label class="custom-control-label" for="activate{{forloop.counter0}}"></label>
+              </div>
+            </td>
+            <td class="d-flex justify-content-around">
+              <a href="{% url 'seller_delete_flash_sale' flash.id %}">
+                <i class="fas fa-fw fa-trash text-danger"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+          <!-- end looping product -->
+
+          {% else %}
+          <tr>
+            <td colspan="6">
+              <div class="alert alert-warning" role="alert">
+                Belum ada produk yang di flash sale.
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<!-- select session modal -->
+{% include 'store/parts/flash-sale-modal.html' %} {% endblock %} {% block script %}
+<script>
+  function activate(event, id) {
+    checkActivate = event.target;
+    if (checkActivate.checked == true) {
+      window.location.href = `/seller/flash_sale/activate/${Number(id)}/activate/`
+      console.log(id);
+      console.log('activate');
+    } else {
+      window.location.href = `/seller/flash_sale/activate/${Number(id)}/deactivate/`;
+      console.log(id);
+      console.log('Deactivated');
+    }
+  }
+
+  // Get the checkbox
+  const checkBox = document.getElementById('selectAll');
+
+  checkBox.addEventListener('click', () => {
+    // Get the all checkbox
+    const checkBoxProduct = document.querySelectorAll("input[name='select-product']");
+
+    // If the checkbox is checked, display the output text
+    if (checkBox.checked == true) {
+      checkBoxProduct.forEach((check) => {
+        check.checked = true;
+      });
+    } else {
+      checkBoxProduct.forEach((check) => {
+        check.checked = false;
+      });
+    }
+  });
+
+  $(function () {
+    $('#datepicker').datetimepicker({
+      locale: 'id',
+      format: 'YYYY-MM-DD',
+    });
+  });
+</script>
+{% endblock %}

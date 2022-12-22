@@ -1,0 +1,34 @@
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="confirmModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Pembayaran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" id="confirm-payment-form" enctype="multipart/form-data">
+          <p id="payment-warning" class="bg-warning p-2"></p>
+          {% csrf_token %}
+          <input type="hidden" name="orderId" id="orderId">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="{{ forms.shiping_receipt.auto_id }}" class="form-label">Upload Bukti Pembayaran</label>
+              {{ forms.payment_proof }}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-primary">Konfirmasi</button>
+        </div>
+      </form>
+      </div>
+  </div>
+</div>

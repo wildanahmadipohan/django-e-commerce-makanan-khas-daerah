@@ -1,0 +1,65 @@
+{% block style %}
+<style>
+  .category-nav_item {
+    text-align: center;
+    padding: 0.5rem;
+    color: #212529;
+    text-decoration: none;
+  }
+
+  .category-nav_item:hover {
+    color: #fcb326;
+  }
+
+  .category-nav_item.active {
+    border-bottom: solid 2px #fcb326;
+    color: #fcb326;
+  }
+</style>
+{% endblock %}
+
+<div class="myCard category-nav d-flex flex-row justify-content-around mb-5 mt-2" id="category-nav">
+  {% for category in menu_categories %}
+  <a href="{% url 'category' category.slug %}" class="category-nav_item flex-fill"
+    >{{ category.name }}</a
+  >
+  {% endfor %}
+</div>
+
+{% block script %}
+<script>
+  const categoryNav = document.getElementById('category-nav');
+  const navButtons = categoryNav.querySelectorAll('.category-nav_item');
+  const url = new URL(window.location.href);
+  const categorySlug = url.pathname;
+
+  const checkButton = (text) => {
+    navButtons.forEach((btn) => {
+      console.log(btn.textContent === text);
+      if (btn.textContent === text) {
+        btn.className += ' active';
+      } else {
+        btn.className = btn.className.replace(' active', '');
+      }
+    });
+  };
+
+  switch (categorySlug) {
+    case '/kue-kering/':
+      checkButton('Kue Kering');
+      break;
+    case '/kerupuk/':
+      checkButton('Kerupuk');
+      break;
+    case '/kripik/':
+      checkButton('Kripik');
+      break;
+    case '/abon/':
+      checkButton('Abon');
+      break;
+    default:
+      checkButton('Kue Kering');
+      break;
+  }
+</script>
+{% endblock %}

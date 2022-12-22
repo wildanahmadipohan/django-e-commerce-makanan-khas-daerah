@@ -1,0 +1,186 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Flash Sale | {% endblock %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .page-link {
+    color: #2e4859 !important;
+  }
+
+  .pagination .active .page-link {
+    background-color: #2e4859 !important;
+    color: #ffff !important;
+  }
+
+  .discount {
+    background-color: #f78e33;
+    color: #fff;
+    width: 3rem;
+    position: absolute;
+    right: 0;
+    z-index: 999;
+    text-align: center;
+    padding: 2px;
+    border-radius: 0 0 0 8px;
+  }
+
+  .time-section {
+    display: inline-block;
+    margin-left: 2px;
+  }
+
+  .time-section:first-child {
+    margin-left: 0;
+  }
+
+  .time-section > .value {
+    background-color: #202020;
+    height: 30px;
+    width: 30px;
+    border-radius: 5px;
+    font-size: 1rem;
+    color: #fff;
+    line-height: 30px;
+    text-align: center;
+  }
+
+  .countDownAlert {
+    display: none;
+    padding: 20px;
+    border-radius: 3px;
+    background-color: #f78e33; /* Red */
+    color: white;
+    margin: 0 auto;
+    width: 40%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    position: fixed;
+    z-index: 999999;
+  }
+
+  /* The close button */
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  /* When moving the mouse over the close button */
+  .closebtn:hover {
+    color: black;
+  }
+</style>
+{% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="semua-produk">
+  <div class="container">
+    <nav aria-label="breadcrumb" class="py-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landingpage' %}">Beranda</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Flash Sale</li>
+      </ol>
+    </nav>
+    
+    {% if flash_product_today %}
+    <div class="d-flex align-items-center justify-content-center">
+      <h3>Flash Sale</h3>
+      <span class="ms-4">Berakhir dalam: </span>
+      <div id="flipdown" class="flipdown ms-4"></div>
+    </div>
+    <div class="row row-cols-4 gx-4 gy-3 mt-3">
+      {% for flash_product in flash_product_today %}
+      <!--  -->
+      {% include 'product/parts/product-flash-list.html' %}
+      <!--  -->
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="d-flex align-items-center justify-content-center">
+      <h3>Tidak ada produk yang sedang flash sale.</h3>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+<div class="countDownAlert" id="countDownAlert">
+  Flash Sale telah berakhir, Terima kasih.
+  <br />
+  <button class="btn btn-primary mt-4 btn-block" onclick="hideCountDownAlert()">OK</button>
+</div>
+<!-- <div class="coba">ini coba</div> -->
+{% endblock %}
+
+<!--  -->
+{% block script %}
+<script>
+  const numberSession = parseInt('{{ number_session }}');
+  let endSession;
+  const today = new Date();
+
+  switch (numberSession) {
+    case 1:
+      today.setHours(12, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    case 2:
+      today.setHours(13, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    case 3:
+      today.setHours(18, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    case 4:
+      today.setHours(21, 0, 0);
+      endSession = today.getTime() / 1000;
+      break;
+    default:
+      today.setHours(23, 59, 59);
+      endSession = today.getTime() / 1000;
+      break;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Set up FlipDown
+    var flipdown = new FlipDown(endSession, {
+      headings: ['', '', '', ''],
+    })
+
+      // Start the countdown
+      .start()
+
+      // Do something when the countdown ends
+      .ifEnded(() => {
+        showCountDownAlert();
+      });
+  });
+
+  function showCountDownAlert() {
+    const alert = document.getElementById('countDownAlert');
+    document.body.classList.toggle('loader-visible');
+    alert.style.display = 'block';
+  }
+
+  function hideCountDownAlert() {
+    const alert = document.getElementById('countDownAlert');
+    document.body.classList.toggle('loader-visible');
+    alert.style.display = 'none';
+    location.reload();
+  }
+</script>
+{% endblock %}

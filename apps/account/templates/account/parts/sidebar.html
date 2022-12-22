@@ -1,0 +1,128 @@
+{% load static %}
+
+<!-- block style -->
+{% block style %}
+<style>
+  .devider {
+    color: #838894;
+    width: 90%;
+  }
+  .ubah-profil {
+    font-size: 0.8rem;
+    display: block;
+    color: #838894;
+    text-decoration: none;
+  }
+
+  .ubah-profil:hover {
+    color: #838894;
+    text-decoration: none;
+  }
+
+  .side-nav_title {
+    color: #838894;
+  }
+
+  .side-nav ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  .side-nav ul li {
+    padding-bottom: 0.8rem;
+  }
+
+  .side-nav_item {
+    color: #212529;
+    text-decoration: none;
+  }
+
+  .side-nav_item:hover {
+    color: #fcb326;
+  }
+
+  .side-nav ul li a.active {
+    color: #fcb326;
+  }
+</style>
+{% endblock %}
+
+<div class="sidebar">
+  <div class="side-header py-2">
+    <div class="d-flex gap-4">
+      <div class="align-self-center">
+        <a href="{% url 'profile' %}">
+          {% if user.account.image %}
+          <img
+            class="rounded-circle"
+            style="width: 3rem; height: 3rem"
+            src="{{ user.account.image.url }}"
+          />
+          {% else %}
+          <img
+            class="rounded-circle"
+            style="width: 3rem; height: 3rem"
+            src="{% static 'images/user.jpg' %}"
+          />
+          {% endif %}
+        </a>
+      </div>
+      <div class="align-self-center">
+        <span>{{ user.username }}</span>
+        <a class="ubah-profil" href="{% url 'profile' %}"
+          ><i class="bi bi-pencil pr-2"></i> Ubah Profil</a
+        >
+      </div>
+    </div>
+  </div>
+  <hr class="devider" />
+  <div class="side-nav mt-4" id="menu-saya">
+    <span class="side-nav_title">MENU SAYA</span>
+    <hr class="devider" />
+    <ul>
+      <li>
+        <a href="{% url 'profile' %}" class="side-nav_item profile"
+          ><i class="bi bi-person-fill"></i> Akun Saya
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'orders' %}" class="side-nav_item orders">
+          <i class="bi bi-receipt"></i> Pesanan Saya
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'address' %}" class="side-nav_item address">
+          <i class="bi bi-house-door-fill"></i> Alamat Saya
+        </a>
+      </li>
+    </ul>
+  </div>
+  <hr class="devider" />
+  <div class="side-nav mt-4">
+    <span class="side-nav_title">TOKO SAYA</span>
+    <hr class="devider" />
+    <ul>
+      <li>
+        <a href="{% url 'seller_dashboard' %}" class="side-nav_item">
+          <i class="bi bi-shop"></i> Kelola Toko
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{% block script %}
+<script>
+  const navContainer = document.getElementById('menu-saya');
+  const sideNavButtons = navContainer.querySelectorAll('.side-nav_item');
+  const url = window.location.href.split('/');
+
+  sideNavButtons.forEach((btn) => {
+    if (btn.classList.contains(url[url.length - 2])) {
+      btn.className += ' active';
+    } else {
+      btn.className.replace(' active', '');
+    }
+  });
+</script>
+{% endblock %}

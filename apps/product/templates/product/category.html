@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- block title -->
+{% block title %} Kategori | {% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="kategori">
+  <div class="container">
+    <nav aria-label="breadcrumb" class="py-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landingpage' %}">Beranda</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+      </ol>
+    </nav>
+
+    <div class="menu-categories">{% include 'core/parts/category-nav-tab.html' %}</div>
+
+    <h3>Kategori {{ category.name }}</h3>
+    <div class="row row-cols-4 gx-4 gy-3 mt-3">
+      {% for product in category.products.all %}
+      <!--  -->
+      {% include 'product/parts/product-list.html' %}
+      <!--  -->
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<!-- <div class="coba">ini coba</div> -->
+{% endblock %}

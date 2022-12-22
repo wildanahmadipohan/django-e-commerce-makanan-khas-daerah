@@ -1,0 +1,38 @@
+<!-- load format number -->
+{% load l10n %}
+
+<div class="col-3">
+  <div class="card shadow">
+    <div class="product-item">
+      <div class="discount">
+        {{flash_product.discount}}% <br />
+        OFF
+      </div>
+      <img
+        src="{{ flash_product.product.get_thumbnail }}"
+        class="card-img-top"
+        alt="{{ flash_product.product.name }}"
+      />
+    </div>
+    <div class="card-body product-desc">
+      <h5 class="card-title mb-0">{{ flash_product.product.name }}</h5>
+      <p class="text-muted text-decoration-line-through mb-0">Rp. {{ flash_product.product.price}}</p>
+      <p class="card-text fs-2">
+        Rp. <span style="font-weight: 600">{{ flash_product.product.discount_price }}</span>
+      </p>
+      <hr />
+      <button
+        data-product="{{ flash_product.product.id }}"
+        data-action="add"
+        class="btn btn-block btn-primary mb-2 add-btn update-cart"
+      >
+        Masukkan Keranjang
+      </button>
+      <a
+        href="{% url 'detail_product' flash_product.product.category.slug flash_product.product.slug %}"
+        class="btn btn-block btn-light"
+        >Detail Produk</a
+      >
+    </div>
+  </div>
+</div>

@@ -1,0 +1,181 @@
+{% extends 'core/base.html' %}
+
+<!-- Load static file  -->
+{% load static %}
+
+<!-- load format number -->
+{% load l10n %}
+
+<!-- block title -->
+{% block title %} Keranjang Belanja | {% endblock %}
+
+<!-- block content  -->
+{% block content %}
+<section id="cart">
+  <div class="container">
+    <nav aria-label="breadcrumb" class="py-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'landingpage' %}">Beranda</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Keranjang Belanja</li>
+      </ol>
+    </nav>
+
+    <div class="cart-header">
+      <div class="row">
+        <div class="myCard px-4 py-2">
+          <div class="row d-flex justify-content-between align-items-center">
+            <div class="col-4">
+              <span>Produk</span>
+            </div>
+            <div class="col-7">
+              <div class="row">
+                <div class="col-3 text-center">
+                  <span class="cart-header__title">Harga Satuan</span>
+                </div>
+                <div class="col-3 text-center">
+                  <span class="cart-header__title">Kuantitas</span>
+                </div>
+                <div class="col-3 text-center">
+                  <span class="cart-header__title">Total Harga</span>
+                </div>
+                <div class="col-3 text-center">
+                  <span class="cart-header__title">Aksi</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-item mt-3">
+      <div class="row pb-3">
+        <div class="myCard px-4 py-2">
+          <div class="cart-item__content pt-3">
+            {% if items %} {% for item in items%}
+            <div class="row d-flex justify-content-between align-items-center mb-4">
+              <div class="col-4">
+                <div class="row">
+                  <div class="col-3 cart-item_thumbnail">
+                    <img src="{{ item.product.get_thumbnail }}" alt="{{ item.product.name }}" />
+                  </div>
+                  <div class="col-1"></div>
+                  <div class="col-8">
+                    <h6 class="cart-item__title mb-0">{{ item.product.name }}</h6>
+                    <a class="toko" style="font-size: 0.9rem" href="#"
+                      >{{ item.product.store.name }}</a
+                    >
+                  </div>
+                </div>
+              </div>
+              <div class="col-7">
+                <div class="row">
+                  <div class="col-3 d-flex justify-content-end">
+                    <div class="d-flex flex-column ">
+                      {% if item.is_flash_sale %}
+                      <span class="cart-item__price align-self-end text-muted text-decoration-line-through"
+                      >Rp. {{ item.product.price }}</span
+                      >
+                      <span class="cart-item__price align-self-end fs-6"
+                      >Rp. {{ item.product.discount_price }}</span
+                      >
+                      {% else %}
+                      <span class="cart-item__price align-self-end"
+                      >Rp. {{ item.product.price }}</span
+                      >
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="col-3">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <button
+                          class="btn btn-secondary btn-sm update-cart"
+                          data-product="{{ item.product.id }}"
+                          data-action="remove"
+                          id="minus-btn"
+                        >
+                          <i class="bi bi-dash"></i>
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        id="qty_input"
+                        class="form-control form-control-sm"
+                        value="{{ item.qty }}"
+                        min="1"
+                        style="text-align: center"
+                        disabled
+                      />
+                      <div class="input-group-prepend">
+                        <button
+                          class="btn btn-success btn-sm update-cart"
+                          data-product="{{ item.product.id }}"
+                          data-action="add"
+                          data-from="cart-templates"
+                          id="plus-btn"
+                        >
+                          <i class="bi bi-plus"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-3 d-flex justify-content-end">
+                    <span class="cart-item__subtotal-price align-self-center"
+                      >Rp. {{ item.get_total }}</span
+                    >
+                  </div>
+                  <div class="col-3 d-flex justify-content-center">
+                    <div class="input-group-prepend">
+                      <button
+                        class="button-remove-cart delete-cart"
+                        data-item="{{ item.product.id }}"
+                        data-action="delete"
+                      >
+                        <i class="bi bi-x"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %} {% else %}
+            <p>Keranjang Belanja masih kosong.</p>
+            <a href="{% url 'products' %}" class="btn btn-primary">Belanja Sekarang</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-footer mb-5">
+      <div class="row">
+        <div class="myCard px-4 py-2">
+          <div class="row d-flex justify-content-between align-items-center">
+            <div class="col-3">
+              {% if items %}
+              <span class="remove-cart" id="delete-all-cart" data-cart="{{ cart.id }}"
+                >Hapus Semua</span
+              >
+              {% endif %}
+            </div>
+            <div class="col-4">
+              <span
+                >Total ({{ cart.get_cart_items }} Produk):
+                <span class="cart-item__total-price">Rp. {{ cart.get_cart_total }}</span></span
+              >
+            </div>
+            <div class="col-2">
+              {% if items %}
+              <a href="{% url 'checkout' %}" class="btn btn-primary btn-block">Checkout</a>
+              {% else %}
+              <span class="btn btn-primary btn-block disabled">Checkout</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

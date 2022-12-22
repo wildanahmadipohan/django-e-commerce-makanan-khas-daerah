@@ -1,0 +1,12 @@
+<h6 class="title">
+  {{ value.full_name }}
+  <span class="subtitle">| {{ value.phone }}</span>
+  {% if value.isMainAddress %}
+  <span class="badge bg-transparent text-warning fw-normal border border-warning"> Utama</span>
+  {% endif %}
+</h6>
+<p class="mb-0 pb-0">
+  {{ value.street }} {% if value.detail_address %}({{ value.detail_address }}){% endif %}
+</p>
+<p class="text-uppercase mb-1">{{ value.city }}, {{ value.province}}, ID {{ value.postal_code }}</p>
+<hr />
